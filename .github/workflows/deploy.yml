@@ -1,0 +1,20 @@
+# main 에 push 하면 ECS 로 배포한다(2학년 13단원).
+# 저장소 변수 AWS_ROLE_ARN 에 배포 역할 ARN 을 넣어야 동작한다. 없으면 건너뛴다.
+name: deploy
+on:
+  push:
+    branches: [main]
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  deploy:
+    if: ${{ vars.AWS_ROLE_ARN != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ap-northeast-2
+      - run: ./deploy/deploy.sh

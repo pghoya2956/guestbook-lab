@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+.pytest_cache/
+data/
+config.env
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+.DS_Store
+*.sync-conflict-*
+.syncthing.*.tmp

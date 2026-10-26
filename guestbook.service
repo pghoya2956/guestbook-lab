@@ -1,0 +1,14 @@
+[Unit]
+Description=Guestbook
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+WorkingDirectory=/opt/guestbook
+EnvironmentFile=-/opt/guestbook/config.env
+ExecStart=/opt/guestbook/.venv/bin/python app.py
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{ title }}</title>
+<style>
+  body { font-family: -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; max-width: 720px; margin: 0 auto; padding: 24px 16px; color: #142033; background: #f5f4ef; }
+  h1 { margin: 0 0 4px; }
+  .meta { color: #4b5563; font-size: 14px; }
+  .box { background: #fff; border: 1px solid #ddd9ce; border-radius: 12px; padding: 16px; margin: 16px 0; }
+  .notice { border-left: 6px solid #e8822a; }
+  .hello { color: #a9530e; font-weight: 600; }
+  form input, form textarea { width: 100%; box-sizing: border-box; padding: 8px; margin: 4px 0 8px; font: inherit; }
+  button { background: #142033; color: #f5f4ef; border: 0; padding: 10px 18px; border-radius: 8px; font: inherit; cursor: pointer; }
+  .entry { border-top: 1px solid #eae8e0; padding: 12px 0; }
+  .entry img { max-width: 100%; border-radius: 8px; margin-top: 8px; }
+</style>
+</head>
+<body>
+  <h1>{{ title }}</h1>
+  <p>{{ intro }}</p>
+  <p class="meta">서버: <b>{{ host }}</b> · 저장소: <b>{{ storage }}</b></p>
+
+  {% if notice %}<div class="box notice">{{ notice }}</div>{% endif %}
+  <p class="hello">오늘의 한마디: {{ hello }}</p>
+
+  <form class="box" method="post" action="/entries" enctype="multipart/form-data">
+    <input name="name" placeholder="이름" maxlength="30">
+    <textarea name="msg" placeholder="한마디" maxlength="300" required></textarea>
+    {% if image_enabled %}<input type="file" name="image" accept="image/*">{% endif %}
+    <button type="submit">남기기</button>
+  </form>
+
+  <div class="box">
+    {% for e in entries %}
+    <div class="entry">
+      <b>{{ e.name }}</b>
+      <div>{{ e.msg }}</div>
+      {% if e.image_url %}<img src="{{ e.image_url }}" alt="첨부 이미지">{% endif %}
+    </div>
+    {% else %}
+    <p class="meta">아직 글이 없습니다.</p>
+    {% endfor %}
+  </div>
+</body>
+</html>
