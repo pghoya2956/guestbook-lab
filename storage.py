@@ -62,6 +62,7 @@ class MySQLStore:
         prefix = os.environ.get("PARAM_PREFIX", "/guestbook/db")
         self.conn_args = dict(
             host=_ssm_param(f"{prefix}/host"),
+            port=int(os.environ.get("DB_PORT", "3306")),
             user=os.environ.get("DB_USER", "admin"),
             password=_ssm_param(f"{prefix}/password", decrypt=True),
             database=os.environ.get("DB_NAME", "guestbook"),

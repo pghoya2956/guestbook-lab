@@ -6,4 +6,4 @@
 - 앱은 80 포트로 뜬다(학교망은 비표준 포트를 막을 수 있다). 서버 접속은 Session Manager 기준이라 SSH 관련 파일을 두지 않는다.
 - 수업 덱의 단원 번호와 이 저장소의 파일·주소가 맞물려 있다. 경로·주소·설정 이름을 바꾸면 덱과 `docs/menu/` 를 같이 고친다.
 - 학생이 읽는 문서는 한국어로, 오류가 났을 때 무엇을 볼지까지 적는다.
-- 테스트: `uv run --no-project --python 3.11 --with 'flask>=3.0,<4' --with boto3 --with pymysql --with pytest python -m pytest -q`
+- 테스트: `uv run --no-project --python 3.11 --with 'flask>=3.0,<4' --with boto3 --with pymysql --with 'moto[ssm,dynamodb]' --with pytest python -m pytest -q` (MySQL 테스트는 docker 가 있으면 mysql:8.4 컨테이너로 돈다)

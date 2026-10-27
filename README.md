@@ -32,6 +32,7 @@ curl -s https://raw.githubusercontent.com/pghoya2956/guestbook-lab/main/deploy/u
 | `lambda/api/` | DynamoDB 를 쓰는 서버리스 방명록 API |
 | `Dockerfile`, `deploy/deploy.sh` | 컨테이너 이미지와 ECS 배포 |
 | `.github/workflows/deploy.yml` | push 하면 ECS 로 배포(저장소 변수 `AWS_ROLE_ARN` 필요) |
+| `terraform/setup-terraform.sh` | CloudShell 에 Terraform 설치 |
 | `terraform/step1`, `step2` | Terraform 실습 1단계와 정답 |
 | `docs/menu/` | 미니 프로젝트 개선 메뉴 안내 |
 

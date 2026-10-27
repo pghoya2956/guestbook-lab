@@ -107,7 +107,12 @@ def add_entry():
 @app.get("/health")
 def health():
     """로드 밸런서 상태 검사용. 앱이 살아 있으면 200."""
-    return {"status": "ok", "host": socket.gethostname()}
+    return {
+        "status": "ok",
+        "host": socket.gethostname(),
+        "storage": store.name,
+        "notice": bool(NOTICE_BUCKET),
+    }
 
 
 @app.get("/error")
