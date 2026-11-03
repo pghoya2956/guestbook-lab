@@ -22,7 +22,7 @@
 }
 ```
 
-3. 서버의 `/opt/guestbook/config.env` 에 `IMAGE_BUCKET=버킷이름` 을 적고 `sudo systemctl restart guestbook`
+3. `sudo nano /opt/guestbook/config.env` 로 열어 `IMAGE_BUCKET=버킷이름` 을 적고 `sudo systemctl restart guestbook`
 
 ## 확인
 

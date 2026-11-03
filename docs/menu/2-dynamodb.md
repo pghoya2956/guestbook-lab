@@ -22,7 +22,7 @@
 }
 ```
 
-3. `config.env` 에서 `STORAGE=dynamodb` 로 바꾸고 `sudo systemctl restart guestbook`
+3. `sudo nano /opt/guestbook/config.env` 로 열어 `STORAGE=dynamodb` 로 바꾸고 `sudo systemctl restart guestbook`
 
 ## 확인
 
@@ -30,4 +30,4 @@
 
 ## 막히면
 
-- 페이지가 500: `journalctl -u guestbook -n 30` 에서 `AccessDeniedException` 이면 정책, `ResourceNotFoundException` 이면 테이블 이름을 봅니다.
+- 페이지가 500: `sudo journalctl -u guestbook -n 30` 에서 `AccessDeniedException` 이면 정책, `ResourceNotFoundException` 이면 테이블 이름을 봅니다.

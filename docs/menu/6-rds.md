@@ -33,7 +33,7 @@
 }
 ```
 
-5. 서버 한 대에 Session Manager 로 접속해 `config.env` 의 `STORAGE=mysql` 로 바꾸고 `sudo systemctl restart guestbook`
+5. 서버 한 대에 Session Manager 로 접속해 `sudo nano /opt/guestbook/config.env` 로 열어 `STORAGE=mysql` 로 바꾸고 `sudo systemctl restart guestbook`
 
 ## 확인
 
@@ -43,7 +43,7 @@
 
 ## 막히면
 
-- 페이지가 500: `journalctl -u guestbook -n 30` 을 봅니다.
+- 페이지가 500: `sudo journalctl -u guestbook -n 30` 을 봅니다.
   - `ParameterNotFound`: 파라미터 이름 오타. `/guestbook/db/host` 처럼 앞에 `/` 가 있어야 합니다
   - `AccessDeniedException`: 4번 정책의 계정 ID 나 경로
   - `Can't connect to MySQL server` 또는 시간 초과: 2번 보안 그룹 규칙의 소스가 방명록 서버의 보안 그룹인지

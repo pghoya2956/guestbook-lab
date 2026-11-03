@@ -3,7 +3,7 @@
 # 실패하면 서버에서 /var/log/cloud-init-output.log 를 본다.
 set -euxo pipefail
 
-dnf install -y git python3.11
+dnf install -y git python3.11 nano
 git clone https://github.com/pghoya2956/guestbook-lab.git /opt/guestbook
 cd /opt/guestbook
 python3.11 -m venv .venv
