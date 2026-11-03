@@ -1,4 +1,4 @@
-# 오늘의 한마디 (1학년 16단원). 앱의 HELLO_API_URL 에 이 함수의 API 주소를 넣으면 앱이 여기서 받아 간다.
+# 오늘의 한마디 (1학년 13단원). 앱의 HELLO_API_URL 에 이 함수의 API 주소를 넣으면 앱이 여기서 받아 간다.
 import json
 import random
 

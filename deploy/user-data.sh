@@ -1,5 +1,5 @@
 #!/bin/bash
-# EC2 사용자 데이터. 서버가 처음 켜질 때 root 로 한 번 실행된다(1학년 14단원, 2학년 3단원).
+# EC2 사용자 데이터. 서버가 처음 켜질 때 root 로 한 번 실행된다(1학년 11단원, 2학년 3단원).
 # 실패하면 서버에서 /var/log/cloud-init-output.log 를 본다.
 set -euxo pipefail
 
