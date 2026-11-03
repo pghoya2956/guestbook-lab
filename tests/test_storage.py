@@ -24,10 +24,20 @@ def _load(monkeypatch, **env):
     return importlib.import_module("app")
 
 
+@mock_aws
 def test_health_reports_storage_and_notice(monkeypatch, tmp_path):
-    app = _load(monkeypatch, STORAGE="file", DATA_FILE=str(tmp_path / "e.json"), NOTICE_BUCKET="b")
+    """notice 는 공지를 실제로 읽었는지: ok, missing(버킷 미설정), error(권한·버킷 오류). 강사 관측이 8단원 판정에 쓴다."""
+    import boto3
+
+    app = _load(monkeypatch, STORAGE="file", DATA_FILE=str(tmp_path / "e.json"), NOTICE_BUCKET="notice-test")
     body = app.app.test_client().get("/health").get_json()
-    assert body["storage"] == "file" and body["notice"] is True and body["host"]
+    assert body["storage"] == "file" and body["notice"] == "error" and body["host"]
+    s3 = boto3.client("s3", region_name="ap-northeast-2")
+    s3.create_bucket(Bucket="notice-test", CreateBucketConfiguration={"LocationConstraint": "ap-northeast-2"})
+    s3.put_object(Bucket="notice-test", Key="notice.txt", Body="hi".encode())
+    assert app.app.test_client().get("/health").get_json()["notice"] == "ok"
+    app = _load(monkeypatch, STORAGE="file", DATA_FILE=str(tmp_path / "e.json"), NOTICE_BUCKET="")
+    assert app.app.test_client().get("/health").get_json()["notice"] == "missing"
 
 
 @mock_aws

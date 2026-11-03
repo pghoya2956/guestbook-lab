@@ -31,18 +31,26 @@ LOCAL_HELLO = ["오늘도 화이팅", "커밋은 자주", "정리는 실력", "�
 store = storage.from_env()
 
 
-def read_notice():
-    """S3 의 notice.txt 를 요청마다 읽는다. 버킷을 안 정했거나 실패하면 빈 값."""
+def read_notice_status():
+    """(상태, 공지 문장). 상태는 ok, missing(버킷을 안 정함), error(권한·버킷 오류). S3 의 notice.txt 를 요청마다 읽는다."""
     if not NOTICE_BUCKET:
-        return ""
+        return "missing", ""
     try:
         import boto3
+        from botocore.config import Config
 
-        s3 = boto3.client("s3", region_name=AWS_REGION)
+        # 로드 밸런서 상태 검사도 이 함수를 거친다. S3 가 막혀도 오래 묶이지 않게 짧게 끊는다
+        quick = Config(connect_timeout=2, read_timeout=2, retries={"max_attempts": 1})
+        s3 = boto3.client("s3", region_name=AWS_REGION, config=quick)
         obj = s3.get_object(Bucket=NOTICE_BUCKET, Key="notice.txt")
-        return obj["Body"].read().decode("utf-8").strip()
+        return "ok", obj["Body"].read().decode("utf-8").strip()
     except Exception as e:  # 실습에서 권한·버킷 오류를 화면에 보여 준다
-        return f"(공지를 읽지 못했습니다: {type(e).__name__})"
+        return "error", f"(공지를 읽지 못했습니다: {type(e).__name__})"
+
+
+def read_notice():
+    """화면에 보일 공지 문장. 버킷을 안 정했으면 빈 값."""
+    return read_notice_status()[1]
 
 
 def hello_message():
@@ -111,7 +119,7 @@ def health():
         "status": "ok",
         "host": socket.gethostname(),
         "storage": store.name,
-        "notice": bool(NOTICE_BUCKET),
+        "notice": read_notice_status()[0],  # ok | missing | error (강사 관측이 8단원 판정에 쓴다)
     }
 
 
