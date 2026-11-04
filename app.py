@@ -119,7 +119,7 @@ def health():
         "status": "ok",
         "host": socket.gethostname(),
         "storage": store.name,
-        "notice": read_notice_status()[0],  # ok | missing | error (강사 관측이 8단원 판정에 쓴다)
+        "notice": read_notice_status()[0],  # ok | missing | error (강사 관측이 9단원 판정에 쓴다)
     }
 
 

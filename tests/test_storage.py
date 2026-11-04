@@ -26,7 +26,7 @@ def _load(monkeypatch, **env):
 
 @mock_aws
 def test_health_reports_storage_and_notice(monkeypatch, tmp_path):
-    """notice 는 공지를 실제로 읽었는지: ok, missing(버킷 미설정), error(권한·버킷 오류). 강사 관측이 8단원 판정에 쓴다."""
+    """notice 는 공지를 실제로 읽었는지: ok, missing(버킷 미설정), error(권한·버킷 오류). 강사 관측이 9단원 판정에 쓴다."""
     import boto3
 
     app = _load(monkeypatch, STORAGE="file", DATA_FILE=str(tmp_path / "e.json"), NOTICE_BUCKET="notice-test")
