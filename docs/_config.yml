@@ -1,0 +1,6 @@
+# GitHub Pages 설정. 원본은 main 브랜치의 docs/ 이고 빌드는 GitHub 이 한다.
+# title 은 docs/index.md 의 H1 과 같게 둔다. 다르면 primer 테마가 첫 화면 위에 제목을 한 번 더 띄운다.
+theme: jekyll-theme-primer
+title: 막혔을 때
+description: AWS 클라우드 입문 실습 도움말
+lang: ko

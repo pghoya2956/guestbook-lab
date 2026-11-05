@@ -1,0 +1,10 @@
+---
+---
+
+@import "{{ site.theme }}";
+
+// 한국어를 낱말 단위로 줄바꿈하고, 긴 명령이나 주소는 화면 폭 안에서 끊는다.
+.markdown-body {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
