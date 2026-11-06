@@ -1,4 +1,9 @@
-# 메뉴 7(심화). VPC 를 코드로 다시 만들기
+---
+title: "메뉴 7(심화). VPC 를 코드로 다시 만들기"
+sidebar:
+  label: "7. Terraform (심화)"
+  order: 7
+---
 
 쓰는 서비스: CloudShell, Terraform · 완료 기준: `terraform apply` 로 손으로 만든 것과 같은 구조(서브넷 2개, 인터넷 게이트웨이, 경로)가 생긴다
 

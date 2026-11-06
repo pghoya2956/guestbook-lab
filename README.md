@@ -1,6 +1,6 @@
 # guestbook-lab
 
-> **막혔을 때**: <https://pghoya2956.github.io/guestbook-lab/> 에서 단원별로 화면 문구와 고치는 법을 찾습니다. 열리지 않으면 같은 내용의 [docs/index.md](docs/index.md) 를 엽니다.
+> **막혔을 때**: <https://pghoya2956.github.io/guestbook-lab/> 에서 단원을 골라 화면 문구와 고치는 법을 찾습니다. 미니 프로젝트 메뉴 안내도 여기 있습니다. 열리지 않으면 같은 내용의 원본 [site/src/content/docs/](site/src/content/docs/) 를 봅니다.
 
 「AWS 클라우드 입문」 실습에서 이틀 동안 키워 가는 방명록 앱입니다. 앱 코드는 거의 바꾸지 않고, 앱이 사는 곳(서버, 네트워크, 저장소, 배포 방식)을 바꿔 가며 AWS를 배웁니다.
 
@@ -36,7 +36,7 @@ curl -s https://raw.githubusercontent.com/pghoya2956/guestbook-lab/main/deploy/u
 | `.github/workflows/deploy.yml` | push 하면 ECS 로 배포(저장소 변수 `AWS_ROLE_ARN` 필요) |
 | `terraform/setup-terraform.sh` | CloudShell 에 Terraform 설치 |
 | `terraform/step1`, `step2` | Terraform 실습 1단계와 정답 |
-| `docs/menu/` | 미니 프로젝트 개선 메뉴 안내 |
+| `site/` | 학생 도움 페이지 「막혔을 때」와 미니 프로젝트 메뉴 안내(Astro Starlight). main 에 push 하면 `.github/workflows/pages.yml` 이 GitHub Pages 로 낸다 |
 
 ## 내 컴퓨터에서 실행
 

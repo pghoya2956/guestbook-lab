@@ -1,0 +1,33 @@
+# 학생 도움 페이지 site/ (Astro Starlight)를 빌드해 GitHub Pages(https://pghoya2956.github.io/guestbook-lab/)로 낸다.
+# 저장소 설정의 Pages 원본은 「GitHub Actions」여야 한다. 학생 fork 에서는 돌지 않는다(저장소 조건).
+name: pages
+on:
+  push:
+    branches: [main]
+    paths: ["site/**", ".github/workflows/pages.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  build:
+    if: github.repository == 'pghoya2956/guestbook-lab'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: withastro/action@a8b97df764791eb61fbf3338ef713b0e61ae05c5 # v6.1.4
+        with:
+          path: site
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1

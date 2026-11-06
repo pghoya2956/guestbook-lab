@@ -1,0 +1,24 @@
+/* 덱과 같은 주황을 강조색으로 쓴다. 어두운 테마가 :root, 밝은 테마가 [data-theme='light'] 다. */
+:root {
+	--sl-color-accent-low: hsl(27, 55%, 18%);
+	--sl-color-accent: hsl(28, 80%, 54%);
+	--sl-color-accent-high: hsl(28, 90%, 80%);
+}
+:root[data-theme='light'] {
+	--sl-color-accent-high: hsl(26, 85%, 28%);
+	--sl-color-accent: hsl(26, 85%, 36%);
+	--sl-color-accent-low: hsl(30, 80%, 90%);
+}
+
+/* 「정상입니다」 상자(tip)는 초록, 「고칠 것」 상자(caution)는 기본 주황 그대로 둔다. */
+.starlight-aside--tip {
+	--sl-color-asides-text-accent: var(--sl-color-green-high);
+	--sl-color-asides-border: var(--sl-color-green);
+	background-color: var(--sl-color-green-low);
+}
+
+/* 한국어를 낱말 단위로 줄바꿈하고, 긴 명령이나 오류 문구는 화면 폭 안에서 끊는다. */
+.sl-markdown-content {
+	word-break: keep-all;
+	overflow-wrap: anywhere;
+}

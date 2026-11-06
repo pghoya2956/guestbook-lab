@@ -1,4 +1,9 @@
-# 메뉴 6(심화). 저장소를 MySQL 데이터베이스로
+---
+title: "메뉴 6(심화). 저장소를 MySQL 데이터베이스로"
+sidebar:
+  label: "6. MySQL (심화)"
+  order: 6
+---
 
 쓰는 서비스: RDS, Parameter Store, 보안 그룹 · 완료 기준: 페이지에 `저장소: mysql` 이 보이고 글이 DB 에 쌓인다
 

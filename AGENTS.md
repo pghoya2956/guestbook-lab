@@ -4,7 +4,7 @@
 
 - 시크릿, AWS 계정 ID, 학생 이름·이메일, 학교 내부 정보를 커밋하지 않는다. 예시 값은 `버킷이름`, `계정ID` 처럼 자리 표시로 쓴다.
 - 앱은 80 포트로 뜬다(학교망은 비표준 포트를 막을 수 있다). 서버 접속은 Session Manager 기준이라 SSH 관련 파일을 두지 않는다.
-- 수업 덱의 단원 번호와 이 저장소의 파일·주소가 맞물려 있다. 경로·주소·설정 이름을 바꾸면 덱과 `docs/menu/`, `docs/index.md` 를 같이 고친다.
-- `docs/` 는 GitHub Pages(https://pghoya2956.github.io/guestbook-lab/, 원본 main 브랜치 `/docs`, 빌드는 GitHub)로 공개된다. `docs/index.md` 는 학생 도움 페이지 「막혔을 때」이고, 단원 앵커 `#u1`, `#u3`~`#u15` 를 덱 실습 장 꼬리말과 QR 이 가리킨다. 앵커를 바꾸면 덱도 고친다. `docs/_config.yml` 의 `title` 은 페이지 H1 과 같게 둔다.
+- 수업 덱의 단원 번호와 이 저장소의 파일·주소가 맞물려 있다. 경로·주소·설정 이름을 바꾸면 덱과 `site/src/content/docs/`(단원 페이지, 메뉴 안내)를 같이 고친다.
+- `site/` 는 학생 도움 페이지 「막혔을 때」다(Astro Starlight). main 에 push 하면 `.github/workflows/pages.yml` 이 빌드해 https://pghoya2956.github.io/guestbook-lab/ 로 낸다(Pages 원본은 GitHub Actions). 단원 페이지 주소 `/u1/`, `/u3/`~`/u15/` 를 덱 실습 장 꼬리말이, 첫 화면을 덱 QR 이 가리키니 슬러그를 바꾸면 덱도 고친다. 상자는 「고칠 것」이 `:::caution[고칠 것]`, 「정상입니다」가 `:::tip[정상입니다]{icon="approve-check-circle"}` 다. 로컬 확인은 `cd site && npm ci && npm run build`(Node 22.23.4 이상) 뒤 `npx astro preview`.
 - 학생이 읽는 문서는 한국어로, 오류가 났을 때 무엇을 볼지까지 적는다.
 - 테스트: `uv run --no-project --python 3.11 --with 'flask>=3.0,<4' --with boto3 --with pymysql --with 'moto[ssm,dynamodb,s3]' --with pytest python -m pytest -q` (MySQL 테스트는 docker 가 있으면 mysql:8.4 컨테이너로 돈다)
