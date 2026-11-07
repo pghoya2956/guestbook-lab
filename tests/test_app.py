@@ -59,3 +59,24 @@ def test_hello_lambda_handler():
     mod = importlib.import_module("lambda_function")
     out = mod.lambda_handler({}, None)
     assert out["statusCode"] == 200 and "message" in out["body"]
+
+
+@pytest.mark.parametrize("region", ["ap-northeast-2", "us-west-2"])
+def test_image_url_uses_regional_s3_host(tmp_path, monkeypatch, region):
+    """사진 주소는 리전 주소로 서명한다. 전역 주소(버킷.s3.amazonaws.com)는 새로 만든 버킷에서 한동안 us-east-1 로
+    풀려 서울 서명이 거부됐다(2026-11-07 리허설, 403 SignatureDoesNotMatch / 400 AuthorizationQueryParametersError)."""
+    monkeypatch.setenv("STORAGE", "file")
+    monkeypatch.setenv("DATA_FILE", str(tmp_path / "entries.json"))
+    monkeypatch.setenv("IMAGE_BUCKET", "guestbook-img-s01-1")
+    monkeypatch.setenv("AWS_REGION", region)
+    monkeypatch.setenv("AWS_ACCESS_KEY_ID", "testing")
+    monkeypatch.setenv("AWS_SECRET_ACCESS_KEY", "testing")
+    for k in ("AWS_PROFILE", "AWS_ENDPOINT_URL", "AWS_ENDPOINT_URL_S3"):
+        monkeypatch.delenv(k, raising=False)
+    for m in ("app", "storage"):
+        sys.modules.pop(m, None)
+    app = importlib.import_module("app")
+    url = app.image_url("images/a.png")
+    assert url.split("/")[2] == f"guestbook-img-s01-1.s3.{region}.amazonaws.com"
+    assert url.split("?")[0].endswith("/images/a.png")
+    assert f"{region}%2Fs3%2Faws4_request" in url and "X-Amz-Expires=3600" in url

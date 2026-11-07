@@ -68,8 +68,15 @@ def image_url(key):
     if not (IMAGE_BUCKET and key):
         return ""
     import boto3
+    from botocore.config import Config
 
-    s3 = boto3.client("s3", region_name=AWS_REGION)
+    # 가상 호스트 방식을 정해 주면 리전 주소(버킷.s3.<리전>.amazonaws.com)로 서명한다. 기본값은 전역 주소라
+    # 새로 만든 버킷에서 한동안 us-east-1 로 풀려 서명이 거부되고 사진이 안 보인다
+    s3 = boto3.client(
+        "s3",
+        region_name=AWS_REGION,
+        config=Config(signature_version="s3v4", s3={"addressing_style": "virtual"}),
+    )
     return s3.generate_presigned_url(
         "get_object", Params={"Bucket": IMAGE_BUCKET, "Key": key}, ExpiresIn=3600
     )
