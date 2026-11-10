@@ -15,18 +15,18 @@ sidebar:
 
 ## 만들 것
 
-1. RDS → 데이터베이스 생성
+1. RDS → 데이터베이스 생성 <a href="https://ap-northeast-2.console.aws.amazon.com/rds/home?region=ap-northeast-2#launch-dbinstance:" target="_blank" rel="noopener">콘솔 열기 ↗</a>
    - **전체 구성**, 엔진 **MySQL**(처음에는 Aurora PostgreSQL 이 골라져 있으니 바꿉니다), 템플릿 **샌드박스**
    - DB 인스턴스 식별자 `guestbook-db`, 마스터 사용자 이름 `admin`, 자격 증명 관리는 **자체 관리**(MySQL 을 고른 직후에는 Secrets Manager 로 골라져 있고 샌드박스를 고르면 자체 관리로 바뀝니다. 엔진, 템플릿 순서로 고른 뒤 다시 확인합니다), 비밀번호 직접 입력(메모해 둡니다)
    - 인스턴스 클래스 `db.t3.micro` 또는 `db.t4g.micro`, 스토리지 20 GiB(샌드박스를 고르면 `db.t4g.micro`, 20 GiB 로 채워집니다). **추가 스토리지 구성**을 펼쳐 스토리지 자동 조정 **끄기**(기본으로 켜져 있습니다)
    - 연결: VPC `guestbook-vpc`(기본값은 Default VPC 라 바꿔야 합니다), 퍼블릭 액세스 **아니요**, 새 VPC 보안 그룹 `guestbook-db`
    - 맨 아래 **추가 구성**을 펼쳐 초기 데이터베이스 이름 `guestbook`, 자동 백업 **끄기**(기본으로 켜져 있습니다)
    - 데이터베이스 생성을 누른 뒤 Chrome 이 비밀번호를 저장할지 물으면 저장하지 않습니다(「사용 안함」). 공용 PC 에 DB 비밀번호가 남습니다.
-2. EC2 → 보안 그룹 → `guestbook-db` → 인바운드 규칙 편집: 유형 MYSQL/Aurora(3306), 소스는 **방명록 서버의 보안 그룹**(11단원 시작 템플릿에서 만든 것. IP 가 아니라 보안 그룹을 고릅니다). 소스 칸에 그 보안 그룹 이름을 치면 목록에 나옵니다. 처음 생긴 규칙(내 IP)은 지웁니다.
-3. Systems Manager → Parameter Store → 파라미터 생성으로 두 개 만들기
+2. EC2 → 보안 그룹 → `guestbook-db` → 인바운드 규칙 편집: 유형 MYSQL/Aurora(3306), 소스는 **방명록 서버의 보안 그룹**(11단원 시작 템플릿에서 만든 것. IP 가 아니라 보안 그룹을 고릅니다). 소스 칸에 그 보안 그룹 이름을 치면 목록에 나옵니다. 처음 생긴 규칙(내 IP)은 지웁니다. <a href="https://ap-northeast-2.console.aws.amazon.com/ec2/home?region=ap-northeast-2#SecurityGroups:" target="_blank" rel="noopener">콘솔 열기 ↗</a>
+3. Systems Manager → Parameter Store → 파라미터 생성으로 두 개 만들기 <a href="https://ap-northeast-2.console.aws.amazon.com/systems-manager/parameters/?region=ap-northeast-2" target="_blank" rel="noopener">콘솔 열기 ↗</a>
    - `/guestbook/db/host`: 유형 String(문자열), 값은 RDS 의 엔드포인트(연결 및 보안 탭에 나옵니다)
    - `/guestbook/db/password`: 유형 **보안 문자열**(목록에서는 SecureString 으로 보입니다), 값은 1번 비밀번호
-4. 방명록 서버의 IAM 역할에 인라인 정책 추가:
+4. 방명록 서버의 IAM 역할에 인라인 정책 추가: <a href="https://console.aws.amazon.com/iam/home#/roles" target="_blank" rel="noopener">콘솔 열기 ↗</a>
 
 ```json
 {

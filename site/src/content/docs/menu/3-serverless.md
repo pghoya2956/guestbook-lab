@@ -13,7 +13,7 @@ sidebar:
 
 ## 만들 것
 
-1. 13단원에서 만든 `guestbook-hello` 함수가 있으면 그대로 씁니다. 없으면 `lambda/hello/lambda_function.py` 로 만들고 API Gateway(HTTP API) 트리거를 붙입니다.
+1. 13단원에서 만든 `guestbook-hello` 함수가 있으면 그대로 씁니다. 없으면 `lambda/hello/lambda_function.py` 로 만들고 API Gateway(HTTP API) 트리거를 붙입니다. <a href="https://ap-northeast-2.console.aws.amazon.com/lambda/home?region=ap-northeast-2#/functions" target="_blank" rel="noopener">콘솔 열기 ↗</a>
 2. 함수의 메시지 목록을 내 문장으로 바꾸고 Deploy
 3. 로드 밸런서 뒤 서버 **두 대 모두** 같은 일을 합니다. 서버마다 Session Manager 로 접속해 `sudo nano /opt/guestbook/config.env` 로 열어 `HELLO_API_URL=함수 API 주소` 를 적고 `sudo systemctl restart guestbook`
 

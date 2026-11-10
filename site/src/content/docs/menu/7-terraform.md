@@ -15,7 +15,7 @@ sidebar:
 
 ## 만들 것
 
-1. 콘솔 위쪽의 CloudShell 아이콘을 눌러 엽니다(리전이 서울인지 확인).
+1. 콘솔 위쪽의 CloudShell 아이콘을 눌러 엽니다(리전이 서울인지 확인). <a href="https://ap-northeast-2.console.aws.amazon.com/cloudshell/home?region=ap-northeast-2" target="_blank" rel="noopener">콘솔 열기 ↗</a>
 2. 저장소를 받고 Terraform 을 설치합니다.
 
 ```bash
@@ -36,7 +36,7 @@ terraform apply     # yes
 
 ## 확인
 
-VPC 콘솔의 리소스 맵에서 `tf-lab` VPC 가 손으로 만든 `guestbook-vpc` 와 같은 모양(서브넷 2개 → 경로표 → 인터넷 게이트웨이)인지 비교합니다.
+VPC 콘솔의 리소스 맵에서 `tf-lab` VPC 가 손으로 만든 `guestbook-vpc` 와 같은 모양(서브넷 2개 → 경로표 → 인터넷 게이트웨이)인지 비교합니다. <a href="https://ap-northeast-2.console.aws.amazon.com/vpcconsole/home?region=ap-northeast-2#vpcs:" target="_blank" rel="noopener">콘솔 열기 ↗</a>
 
 마지막에 `terraform destroy` 로 한 번에 지웁니다. 손으로 지울 때와 비교해 봅니다.
 

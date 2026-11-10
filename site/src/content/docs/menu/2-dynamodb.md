@@ -13,8 +13,8 @@ sidebar:
 
 ## 만들 것
 
-1. DynamoDB 테이블 만들기: 이름 `guestbook`, 파티션 키 `id` (문자열), 용량 모드 온디맨드
-2. EC2 서버의 IAM 역할에 인라인 정책 추가: IAM → 역할 → `guestbook-ec2-role` → 권한 추가 → 인라인 정책 생성 → JSON 에 아래를 붙여 넣고, 정책 이름은 `guestbook-dynamodb` 처럼 정합니다. `계정ID` 는 콘솔 오른쪽 위에 보이는 12자리 숫자를 **하이픈 없이** 넣습니다(화면에는 `1234-5678-9012` 처럼 보여도 정책에는 하이픈을 뺀 숫자 열두 자리를 이어 씁니다).
+1. DynamoDB 테이블 만들기: 이름 `guestbook`, 파티션 키 `id` (문자열), 용량 모드 온디맨드 <a href="https://ap-northeast-2.console.aws.amazon.com/dynamodbv2/home?region=ap-northeast-2#create-table" target="_blank" rel="noopener">콘솔 열기 ↗</a>
+2. EC2 서버의 IAM 역할에 인라인 정책 추가: IAM → 역할 → `guestbook-ec2-role` → 권한 추가 → 인라인 정책 생성 → JSON 에 아래를 붙여 넣고, 정책 이름은 `guestbook-dynamodb` 처럼 정합니다. `계정ID` 는 콘솔 오른쪽 위에 보이는 12자리 숫자를 **하이픈 없이** 넣습니다(화면에는 `1234-5678-9012` 처럼 보여도 정책에는 하이픈을 뺀 숫자 열두 자리를 이어 씁니다). <a href="https://console.aws.amazon.com/iam/home#/roles" target="_blank" rel="noopener">콘솔 열기 ↗</a>
 
 ```json
 {

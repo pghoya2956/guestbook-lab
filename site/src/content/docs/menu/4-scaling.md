@@ -13,9 +13,9 @@ sidebar:
 
 ## 만들 것
 
-1. 오토 스케일링 그룹 → 세부 정보에서 최대 용량이 4인지 확인(12단원에서 4로 만들었습니다)
+1. 오토 스케일링 그룹 → 세부 정보에서 최대 용량이 4인지 확인(12단원에서 4로 만들었습니다) <a href="https://ap-northeast-2.console.aws.amazon.com/ec2/home?region=ap-northeast-2#AutoScalingGroups:" target="_blank" rel="noopener">콘솔 열기 ↗</a>
 2. 자동 조정 → 동적 조정 정책 생성: 대상 추적, 평균 CPU 사용률, 목표 50
-3. CloudShell에서 부하 걸기:
+3. CloudShell에서 부하 걸기: <a href="https://ap-northeast-2.console.aws.amazon.com/cloudshell/home?region=ap-northeast-2" target="_blank" rel="noopener">콘솔 열기 ↗</a>
 
 ```bash
 sudo dnf install -y httpd-tools

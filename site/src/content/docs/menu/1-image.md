@@ -13,8 +13,8 @@ sidebar:
 
 ## 만들 것
 
-1. S3 버킷 하나 만들기. 이름 예: `guestbook-img-좌석번호-숫자`. 퍼블릭 액세스 차단은 **켜 둔 채로** 둡니다.
-2. EC2 서버에 붙은 IAM 역할에 인라인 정책 추가:
+1. S3 버킷 하나 만들기. 이름 예: `guestbook-img-좌석번호-숫자`. 퍼블릭 액세스 차단은 **켜 둔 채로** 둡니다. <a href="https://s3.console.aws.amazon.com/s3/bucket/create?region=ap-northeast-2" target="_blank" rel="noopener">콘솔 열기 ↗</a>
+2. EC2 서버에 붙은 IAM 역할에 인라인 정책 추가: <a href="https://console.aws.amazon.com/iam/home#/roles" target="_blank" rel="noopener">콘솔 열기 ↗</a>
 
 ```json
 {

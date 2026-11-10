@@ -13,10 +13,10 @@ sidebar:
 
 ## 만들 것
 
-1. CloudWatch → 알람 생성 → 지표 선택: ApplicationELB → 로드 밸런서별 → `HTTPCode_Target_5XX_Count`
+1. CloudWatch → 알람 생성 → 지표 선택: ApplicationELB → 로드 밸런서별 → `HTTPCode_Target_5XX_Count` <a href="https://ap-northeast-2.console.aws.amazon.com/cloudwatch/home?region=ap-northeast-2#alarmsV2:create" target="_blank" rel="noopener">콘솔 열기 ↗</a>
 2. 통계 합계, 기간 1분, 조건 5 초과, 데이터 포인트 1/1
 3. 알림 대상은 만들지 않고(학생 연락처를 쓰지 않습니다) 이름만 정해 생성
-4. CloudShell에서 오류 일으키기:
+4. CloudShell에서 오류 일으키기: <a href="https://ap-northeast-2.console.aws.amazon.com/cloudshell/home?region=ap-northeast-2" target="_blank" rel="noopener">콘솔 열기 ↗</a>
 
 ```bash
 for i in $(seq 50); do curl -s -o /dev/null http://로드밸런서주소/error; done
