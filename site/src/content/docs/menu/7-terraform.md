@@ -5,7 +5,9 @@ sidebar:
   order: 7
 ---
 
-쓰는 서비스: CloudShell, Terraform · 완료 기준: `terraform apply` 로 손으로 만든 것과 같은 구조(서브넷 2개, 인터넷 게이트웨이, 경로)가 생긴다
+쓰는 서비스: CloudShell, Terraform
+
+완료 기준: `terraform apply` 로 손으로 만든 것과 같은 구조(서브넷 2개, 인터넷 게이트웨이, 경로)가 생긴다
 
 2학년과 빨리 끝낸 학생용입니다. 10단원에서 손으로 만든 VPC 를 코드로 다시 만들고, 한 번에 지워 봅니다.
 
@@ -16,7 +18,7 @@ sidebar:
 ## 만들 것
 
 1. 콘솔 위쪽의 CloudShell 아이콘을 눌러 엽니다(리전이 서울인지 확인). <a href="https://ap-northeast-2.console.aws.amazon.com/cloudshell/home?region=ap-northeast-2" target="_blank" rel="noopener">콘솔 열기 ↗</a>
-2. 저장소를 받고 Terraform 을 설치합니다.
+2. 저장소를 받고 Terraform 을 설치합니다. <a href="https://github.com/pghoya2956/guestbook-lab" target="_blank" rel="noopener">저장소 열기 ↗</a>
 
 ```bash
 git clone https://github.com/pghoya2956/guestbook-lab.git
@@ -32,7 +34,7 @@ terraform plan      # 무엇이 생길지 먼저 읽는다: + aws_vpc.main
 terraform apply     # yes
 ```
 
-4. 2단계: `step1/main.tf` 에 퍼블릭 서브넷 2개, 인터넷 게이트웨이, 경로표를 직접 더해 봅니다. 막히면 정답 `../step2/main.tf` 를 봅니다. 고칠 때마다 `terraform plan` 으로 무엇이 바뀌는지 읽고 `apply` 합니다.
+4. 2단계: `step1/main.tf` 에 퍼블릭 서브넷 2개, 인터넷 게이트웨이, 경로표를 직접 더해 봅니다. 막히면 정답 `../step2/main.tf` 를 봅니다(<a href="https://github.com/pghoya2956/guestbook-lab/blob/main/terraform/step2/main.tf" target="_blank" rel="noopener">정답 보기 ↗</a>). 고칠 때마다 `terraform plan` 으로 무엇이 바뀌는지 읽고 `apply` 합니다.
 
 ## 확인
 

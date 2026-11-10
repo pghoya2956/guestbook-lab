@@ -26,10 +26,10 @@ sidebar:
 
 | 단원 | 이름 |
 |---|---|
-| 4단원 | 역할 `guestbook-ec2-role`, 서버 `guestbook-1` |
-| 7단원 | 버킷 `guestbook-좌석번호-아무숫자` (예: `guestbook-s01-1104`) |
-| 9단원 | 공지 버킷 `guestbook-notice-좌석번호-숫자` |
-| 10단원 | `guestbook-vpc`, 서브넷 `public-a`(2a)와 `public-c`(2c), `guestbook-igw`, `guestbook-public-rt` |
-| 11단원 | 시작 템플릿 `guestbook-lt`, 보안 그룹 `guestbook-web`, 서버 `guestbook-2` |
-| 12단원 | `guestbook-tg`, `guestbook-alb`, `guestbook-alb-sg`, `guestbook-asg` |
-| 13단원 | 함수 `guestbook-hello` |
+| [4단원](/guestbook-lab/u4/) | 역할 `guestbook-ec2-role`, 서버 `guestbook-1` |
+| [7단원](/guestbook-lab/u7/) | 버킷 `guestbook-좌석번호-아무숫자` (예: `guestbook-s01-1104`) |
+| [9단원](/guestbook-lab/u9/) | 공지 버킷 `guestbook-notice-좌석번호-숫자` |
+| [10단원](/guestbook-lab/u10/) | `guestbook-vpc`, 서브넷 `public-a`(2a)와 `public-c`(2c), `guestbook-igw`, `guestbook-public-rt` |
+| [11단원](/guestbook-lab/u11/) | 시작 템플릿 `guestbook-lt`, 보안 그룹 `guestbook-web`, 서버 `guestbook-2` |
+| [12단원](/guestbook-lab/u12/) | `guestbook-tg`, `guestbook-alb`, `guestbook-alb-sg`, `guestbook-asg` |
+| [13단원](/guestbook-lab/u13/) | 함수 `guestbook-hello` |

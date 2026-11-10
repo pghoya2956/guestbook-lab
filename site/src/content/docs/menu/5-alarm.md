@@ -5,7 +5,9 @@ sidebar:
   order: 5
 ---
 
-쓰는 서비스: CloudWatch 알람 · 완료 기준: 장애를 일으키면 알람 상태가 ALARM 으로 바뀐다
+쓰는 서비스: CloudWatch 알람
+
+완료 기준: 장애를 일으키면 알람 상태가 ALARM 으로 바뀐다
 
 ## 바뀌는 구조
 
@@ -24,7 +26,7 @@ for i in $(seq 50); do curl -s -o /dev/null http://로드밸런서주소/error; 
 
 ## 확인
 
-몇 분 안에 알람 상태가 `OK` 에서 `ALARM` 으로 바뀌고, 오류를 멈추면 다시 `OK` 로 돌아옵니다.
+몇 분 안에 알람 상태가 `OK` 에서 `ALARM` 으로 바뀌고, 오류를 멈추면 다시 `OK` 로 돌아옵니다. <a href="https://ap-northeast-2.console.aws.amazon.com/cloudwatch/home?region=ap-northeast-2#alarmsV2:" target="_blank" rel="noopener">콘솔 열기 ↗</a>
 
 ## 막히면
 

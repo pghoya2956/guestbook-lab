@@ -22,3 +22,11 @@
 	word-break: keep-all;
 	overflow-wrap: anywhere;
 }
+
+/* 세로로 긴 화면 그림(메뉴를 펼친 화면 등)이 화면 두 개 높이가 되지 않게 높이를 화면의 70% 로 묶는다.
+   width 는 그대로 두어 늦게 읽히는 그림도 자리를 미리 잡고, 묶인 그림은 비율을 지킨 채 왼쪽에 붙인다. 가로 그림은 폭에 맞춰 그대로 보인다. */
+.sl-markdown-content img {
+	max-height: 70vh;
+	object-fit: contain;
+	object-position: left center;
+}

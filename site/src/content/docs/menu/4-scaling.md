@@ -5,7 +5,9 @@ sidebar:
   order: 4
 ---
 
-쓰는 서비스: 오토 스케일링 · 완료 기준: 부하를 걸면 서버 수가 늘어난다
+쓰는 서비스: 오토 스케일링
+
+완료 기준: 부하를 걸면 서버 수가 늘어난다
 
 ## 바뀌는 구조
 
@@ -24,9 +26,9 @@ ab -n 20000 -c 50 "http://로드밸런서주소/load?ms=200"
 
 ## 확인
 
-오토 스케일링 그룹의 활동 탭에 인스턴스가 시작된 기록이 생기고, 방명록을 새로고침하면 처음 보는 서버 이름이 섞여 나옵니다. 늘어나는 데 몇 분 걸렸는지 적어 두고 발표에서 말합니다.
+오토 스케일링 그룹의 활동 탭에 인스턴스가 시작된 기록이 생기고, 방명록을 새로고침하면 처음 보는 서버 이름이 섞여 나옵니다. 늘어나는 데 몇 분 걸렸는지 적어 두고 발표에서 말합니다. <a href="https://ap-northeast-2.console.aws.amazon.com/ec2/home?region=ap-northeast-2#AutoScalingGroups:" target="_blank" rel="noopener">콘솔 열기 ↗</a>
 
 ## 막히면
 
-- 서버가 안 늘어남: 부하가 충분한지 EC2 모니터링 탭의 CPU를 봅니다. 기본 지표는 5분 간격이라 기다려야 합니다.
+- 서버가 안 늘어남: 부하가 충분한지 EC2 모니터링 탭의 CPU를 봅니다. 기본 지표는 5분 간격이라 기다려야 합니다. <a href="https://ap-northeast-2.console.aws.amazon.com/ec2/home?region=ap-northeast-2#Instances:" target="_blank" rel="noopener">콘솔 열기 ↗</a>
 - 부하를 멈추면 줄어드는 데는 늘어날 때보다 더 오래 걸립니다. 정상입니다.

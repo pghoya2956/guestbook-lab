@@ -5,7 +5,9 @@ sidebar:
   order: 2
 ---
 
-쓰는 서비스: DynamoDB · 완료 기준: 글이 테이블에 쌓이고, 서버를 바꿔도 글이 남는다
+쓰는 서비스: DynamoDB
+
+완료 기준: 글이 테이블에 쌓이고, 서버를 바꿔도 글이 남는다
 
 ## 바뀌는 구조
 
@@ -27,19 +29,18 @@ sidebar:
 }
 ```
 
-3. 로드 밸런서 뒤 서버 **두 대 모두** 같은 일을 합니다. 서버마다 Session Manager 로 접속해 `sudo nano /opt/guestbook/config.env` 로 열어 `STORAGE=dynamodb` 로 바꾸고 `sudo systemctl restart guestbook`
+3. 로드 밸런서 뒤 서버 **두 대 모두** 같은 일을 합니다. 서버마다 Session Manager 로 접속해 `sudo nano /opt/guestbook/config.env` 로 열어 `STORAGE=dynamodb` 로 바꾸고 `sudo systemctl restart guestbook` <a href="https://ap-northeast-2.console.aws.amazon.com/ec2/home?region=ap-northeast-2#Instances:" target="_blank" rel="noopener">콘솔 열기 ↗</a>
 
 한 대만 바꾸면 새로고침할 때마다 `저장소: file` 과 `저장소: dynamodb` 가 번갈아 나오고, 쓴 글이 어느 서버로 갔는지에 따라 보였다 안 보였다 합니다.
 
-손으로 고친 `config.env` 는 그 서버에만 남습니다. 오토 스케일링이 서버를 새로 만들면(서버 교체, 서버 늘리기) 새 서버는 다시 `file` 로 뜹니다. 모든 서버가 처음부터 DynamoDB 를 쓰게 하려면 메뉴 6 의 도전처럼 시작 템플릿 새 버전의 사용자 데이터에 `sed -i 's/^STORAGE=.*/STORAGE=dynamodb/' /opt/guestbook/config.env` 를 넣고 오토 스케일링 그룹의 인스턴스 새로 고침을 실행합니다.
+손으로 고친 `config.env` 는 그 서버에만 남습니다. 오토 스케일링이 서버를 새로 만들면(서버 교체, 서버 늘리기) 새 서버는 다시 `file` 로 뜹니다. 모든 서버가 처음부터 DynamoDB 를 쓰게 하려면 [메뉴 6](/guestbook-lab/menu/6-rds/) 의 도전처럼 시작 템플릿 새 버전의 사용자 데이터에 `sed -i 's/^STORAGE=.*/STORAGE=dynamodb/' /opt/guestbook/config.env` 를 넣고 오토 스케일링 그룹의 인스턴스 새로 고침을 실행합니다. <a href="https://ap-northeast-2.console.aws.amazon.com/ec2/home?region=ap-northeast-2#LaunchTemplates:" target="_blank" rel="noopener">시작 템플릿 ↗</a> <a href="https://ap-northeast-2.console.aws.amazon.com/ec2/home?region=ap-northeast-2#AutoScalingGroups:" target="_blank" rel="noopener">오토 스케일링 그룹 ↗</a>
 
 ## 확인
 
-새 탭에 `http://로드 밸런서 DNS 이름` 을 열면 `저장소: dynamodb` 가 보이고, 글을 쓰면 DynamoDB 콘솔의 항목 탐색에 나타납니다. 로드 밸런서 뒤 서버들이 모두 같은 글을 보여 주는지 새로고침으로 확인합니다. 「보안 연결을 지원하지 않습니다」 경고가 뜨면 「사이트로 이동」을 누릅니다.
+새 탭에 `http://로드 밸런서 DNS 이름` 을 열면 `저장소: dynamodb` 가 보이고, 글을 쓰면 DynamoDB 콘솔의 항목 탐색에 나타납니다. 로드 밸런서 뒤 서버들이 모두 같은 글을 보여 주는지 새로고침으로 확인합니다. 「보안 연결을 지원하지 않습니다」 경고가 뜨면 「사이트로 이동」을 누릅니다. <a href="https://ap-northeast-2.console.aws.amazon.com/ec2/home?region=ap-northeast-2#LoadBalancers:" target="_blank" rel="noopener">로드 밸런서 ↗</a> <a href="https://ap-northeast-2.console.aws.amazon.com/dynamodbv2/home?region=ap-northeast-2#item-explorer" target="_blank" rel="noopener">항목 탐색 ↗</a>
 
 ## 막히면
 
 - 새로고침마다 저장소가 `file` 과 `dynamodb` 로 바뀜: 3번을 한 서버에만 했습니다. 나머지 서버도 바꿉니다.
 - 역할 화면의 `access-analyzer:ListPolicyGenerations에 대한 액세스 거부됨` 빨간 상자: 이 메뉴에서 쓰지 않는 「정책 생성」 기능의 권한 오류라 무시해도 됩니다.
-
 - 페이지가 500: `sudo journalctl -u guestbook -n 30` 에서 `AccessDeniedException` 이면 정책, `ResourceNotFoundException` 이면 테이블 이름을 봅니다.
