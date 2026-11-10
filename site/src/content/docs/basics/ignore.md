@@ -11,6 +11,10 @@ sidebar:
 닫고 시작합니다.
 :::
 
+:::tip[왼쪽 위 「서비스 메뉴」 안내 말풍선]{icon="approve-check-circle"}
+콘솔을 처음 쓰는 사람에게 뜨는 안내입니다. 「다음」이나 말풍선 바깥을 눌러 닫고 하던 일을 이어 갑니다. 버킷 정책 편집처럼 다른 화면 위에 떠 있어도 실습과 상관없습니다.
+:::
+
 :::tip[Session Manager 화면의 Chrome 번역 말풍선]{icon="approve-check-circle"}
 닫습니다.
 :::
