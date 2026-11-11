@@ -37,6 +37,8 @@ sidebar:
 
    ![콘솔 왼쪽 아래 CloudShell 단추에 표시한 화면](../../../assets/menu/cloudshell-open.png)
 
+   `ab` 는 웹사이트에 요청을 쏟아부어 보는 시험 도구입니다. 아래 명령에서 `-t 900` 은 900초(15분) 동안, `-c 20` 은 요청을 동시에 20개씩 보낸다는 뜻입니다. `/load?ms=200` 은 요청 하나마다 서버 CPU 를 0.2초 바쁘게 만드는 방명록 앱 주소입니다.
+
    ```bash
    # 부하를 거는 도구 ab 를 설치합니다
    sudo dnf install -y httpd-tools

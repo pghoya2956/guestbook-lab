@@ -24,13 +24,13 @@ sidebar:
 
       ![기본 테이블 설정 표의 용량 모드 온디맨드 줄과 테이블 생성 단추에 번호를 붙여 표시한 화면](../../../assets/menu2/ddb-create-btn.png)
 
-2. 테이블 주소(ARN)를 복사합니다. 테이블 목록에서 `guestbook` 을 눌러 「설정」 탭 「일반 정보」의 「Amazon 리소스 이름(ARN)」 옆 복사 아이콘을 누릅니다. 사진의 계정 번호는 가렸습니다. <a href="https://ap-northeast-2.console.aws.amazon.com/dynamodbv2/home?region=ap-northeast-2#tables" target="_blank" rel="noopener">테이블 목록 ↗</a>
+2. 테이블 주소(ARN)를 복사합니다. ARN 은 AWS 자원의 전체 주소입니다. 테이블 목록에서 `guestbook` 을 눌러 「설정」 탭 「일반 정보」의 「Amazon 리소스 이름(ARN)」 옆 복사 아이콘을 누릅니다. 사진의 계정 번호는 가렸습니다. <a href="https://ap-northeast-2.console.aws.amazon.com/dynamodbv2/home?region=ap-northeast-2#tables" target="_blank" rel="noopener">테이블 목록 ↗</a>
 
    ![일반 정보의 Amazon 리소스 이름(ARN)과 복사 아이콘에 표시한 화면](../../../assets/menu2/ddb-arn.png)
 
 3. 서버 역할에 테이블을 읽고 쓸 권한을 붙입니다. 순서는 [메뉴 1](/guestbook-lab/menu/1-image/) 2번과 같습니다. <a href="https://console.aws.amazon.com/iam/home#/roles/details/guestbook-ec2-role?section=permissions" target="_blank" rel="noopener">guestbook-ec2-role 열기 ↗</a>
-   1. `guestbook-ec2-role` 의 「권한 추가」 → 「인라인 정책 생성」을 누릅니다.
-   2. 「JSON」(①)을 누르고 편집기 칸(②)의 내용을 모두 지운 뒤 아래를 붙여 넣습니다. `테이블ARN` 자리에 2번에서 복사한 주소를 붙여 넣습니다.
+   1. `guestbook-ec2-role` 의 「권한 추가」 → 「인라인 정책 생성」을 누릅니다. 인라인 정책은 이 역할에만 붙는 권한 쪽지입니다.
+   2. 「JSON」(①)을 누르고(권한을 적는 정해진 글 형식) 편집기 칸(②)의 내용을 모두 지운 뒤 아래를 붙여 넣습니다. `테이블ARN` 자리에 2번에서 복사한 주소를 붙여 넣습니다.
 
       ```json
       {
@@ -104,10 +104,10 @@ sidebar:
 - 새로고침마다 저장소가 `file` 과 `dynamodb` 로 바뀝니다: 5번을 한 서버에만 했습니다. 두 번째 서버도 고칩니다.
 - 전에 쓴 글이 사라졌습니다: 정상입니다. 전 글은 서버 디스크 파일에 있고 이제 앱은 테이블을 읽습니다.
 - 역할 화면의 `access-analyzer:ListPolicyGenerations에 대한 액세스 거부됨` 빨간 상자: 이 메뉴에서 쓰지 않는 「정책 생성」 기능의 권한 오류라 무시해도 됩니다.
-- 페이지가 `500 Internal Server Error`: 서버에서 아래 명령으로 앱 기록을 봅니다. `AccessDeniedException` 이면 정책의 ARN, `ResourceNotFoundException` 이면 테이블 이름을 봅니다.
+- 페이지가 `500 Internal Server Error`: 서버에서 아래 명령으로 앱 기록을 봅니다. 앱은 실행하며 일어난 일을 일기장처럼 기록해 두고, `journalctl` 은 그 일기장을 보는 명령입니다. 끝부분의 오류 이름으로 원인을 찾습니다. `AccessDeniedException`(권한 없음)이면 정책의 ARN, `ResourceNotFoundException`(그런 테이블이 없음)이면 테이블 이름을 봅니다.
 
   ```bash
-  # 앱이 남긴 최근 기록 30줄을 봅니다
+  # 앱이 남긴 일기장(기록)의 마지막 30줄을 봅니다
   sudo journalctl -u guestbook -n 30
   ```
 

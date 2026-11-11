@@ -88,7 +88,7 @@ sidebar:
 
       ![내 파라미터 목록의 /guestbook/db/host String 과 /guestbook/db/password SecureString 두 줄에 표시한 화면](../../../assets/menu6/ps-list.png)
 
-5. 서버 역할에 파라미터를 읽을 권한을 붙입니다. 순서는 [메뉴 1](/guestbook-lab/menu/1-image/) 2번과 같습니다(`guestbook-ec2-role` → 「권한 추가」 → 「인라인 정책 생성」 → 「JSON」). 아래를 그대로 붙여 넣고 정책 이름은 `guestbook-ssm-db` 로 합니다. 계정 번호 자리의 `*` 는 「내 계정」이라는 뜻으로 그대로 둡니다. <a href="https://console.aws.amazon.com/iam/home#/roles/details/guestbook-ec2-role?section=permissions" target="_blank" rel="noopener">guestbook-ec2-role 열기 ↗</a>
+5. 서버 역할에 파라미터를 읽을 권한을 붙입니다. 순서는 [메뉴 1](/guestbook-lab/menu/1-image/) 2번과 같습니다(`guestbook-ec2-role` → 「권한 추가」 → 「인라인 정책 생성」 → 「JSON」). 인라인 정책은 이 역할에만 붙는 권한 쪽지, JSON 은 권한을 적는 정해진 글 형식, `Resource` 줄의 ARN 은 AWS 자원의 전체 주소입니다. 아래를 그대로 붙여 넣고 정책 이름은 `guestbook-ssm-db` 로 합니다. 계정 번호 자리의 `*` 는 「내 계정」이라는 뜻으로 그대로 둡니다. <a href="https://console.aws.amazon.com/iam/home#/roles/details/guestbook-ec2-role?section=permissions" target="_blank" rel="noopener">guestbook-ec2-role 열기 ↗</a>
 
    ```json
    {
@@ -147,17 +147,17 @@ sidebar:
 
 ## 막히면
 
-- 페이지가 열리지 않거나 `500`: 서버에서 아래 명령으로 앱 기록을 봅니다.
+- 페이지가 열리지 않거나 `500`: 서버에서 아래 명령으로 앱 기록을 봅니다. 앱은 실행하며 일어난 일을 일기장처럼 기록해 두고, `journalctl` 은 그 일기장을 보는 명령입니다. 끝부분의 오류 이름으로 원인을 찾습니다.
 
   ```bash
-  # 앱이 남긴 최근 기록 30줄을 봅니다
+  # 앱이 남긴 일기장(기록)의 마지막 30줄을 봅니다
   sudo journalctl -u guestbook -n 30
   ```
 
-  - `ParameterNotFound`: 파라미터 이름 오타. `/guestbook/db/host` 처럼 앞에 `/` 가 있어야 합니다
-  - `AccessDeniedException`: 5번 정책의 경로
-  - `Can't connect to MySQL server` 또는 시간 초과: 2번 보안 그룹 규칙의 소스가 `guestbook-web` 인지
-  - `Access denied for user 'admin'`: 4번 비밀번호 값. Parameter Store 에서 `/guestbook/db/password` 를 눌러 「편집」으로 값 칸을 모두 지우고 다시 넣습니다
+  - `ParameterNotFound`(그런 파라미터가 없음): 파라미터 이름 오타. `/guestbook/db/host` 처럼 앞에 `/` 가 있어야 합니다
+  - `AccessDeniedException`(권한 없음): 5번 정책의 경로
+  - `Can't connect to MySQL server`(DB 에 닿지 못함) 또는 시간 초과: 2번 보안 그룹 규칙의 소스가 `guestbook-web` 인지
+  - `Access denied for user 'admin'`(DB 가 비밀번호를 거절함): 4번 비밀번호 값. Parameter Store 에서 `/guestbook/db/password` 를 눌러 「편집」으로 값 칸을 모두 지우고 다시 넣습니다
 - 앱이 멈춘 채 몇 분이 지나면 로드 밸런서 상태 검사가 실패해 오토 스케일링이 그 서버를 새 서버로 바꿀 수 있습니다. 새 서버는 설정 파일이 처음 상태이니 6번부터 다시 합니다.
 - 「규칙 저장」을 누르자 「기존 IPv4 CIDR 규칙에 a 참조된 그룹 ID을(를) 지정할 수 없습니다」가 뜹니다: 처음 규칙의 소스만 바꿨습니다. 그 줄을 「삭제」하고 「규칙 추가」로 새 줄을 만듭니다.
 
