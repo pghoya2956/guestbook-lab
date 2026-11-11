@@ -37,7 +37,7 @@ sidebar:
 
       ![nano 로 연 config.env 맨 아래 빈 HELLO_API_URL= 줄에 표시한 화면](../../../assets/menu3/nano-before.png)
 
-   2. 화살표 키로 `HELLO_API_URL=` 줄 끝까지 가서 `=` 바로 뒤에 3번에서 복사한 주소를 붙여 넣습니다(①). 붙여 넣기가 안 되면 주소를 보고 그대로 칩니다. Ctrl+O(②)를 누르고 Enter 로 저장한 뒤 Ctrl+X(③)로 나옵니다.
+   2. 화살표 키로 `HELLO_API_URL=` 줄 끝까지 가서 `=` 바로 뒤에 3번에서 복사한 주소를 붙여 넣습니다(①). Mac 은 ⌘V 로 붙여 넣습니다. 붙여 넣은 뒤 `=` 바로 뒤가 `https://` 로 시작하는지 봅니다. 맨 앞 글자 `h` 가 빠질 때가 있으니 빠졌으면 `h` 를 쳐 넣습니다. 붙여 넣기가 안 되면 주소를 보고 그대로 칩니다. Ctrl+O(②)를 누르고 Enter 로 저장한 뒤 Ctrl+X(③)로 나옵니다.
 
       ```text
       HELLO_API_URL=https://(API 주소).execute-api.ap-northeast-2.amazonaws.com/default/guestbook-hello
