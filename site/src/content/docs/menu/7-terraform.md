@@ -21,17 +21,23 @@ sidebar:
 2. 저장소를 받고 Terraform 을 설치합니다. <a href="https://github.com/pghoya2956/guestbook-lab" target="_blank" rel="noopener">저장소 열기 ↗</a>
 
 ```bash
+# 실습 저장소를 CloudShell 로 받습니다
 git clone https://github.com/pghoya2956/guestbook-lab.git
+# Terraform 을 설치하는 대본을 실행합니다
 bash guestbook-lab/terraform/setup-terraform.sh
 ```
 
 3. 1단계: VPC 하나만 만듭니다.
 
 ```bash
+# 첫 단계 Terraform 코드가 있는 폴더로 들어갑니다
 cd guestbook-lab/terraform/step1
+# 이 코드에 필요한 AWS 연결 도구를 받습니다
 terraform init
-terraform plan      # 무엇이 생길지 먼저 읽는다: + aws_vpc.main
-terraform apply     # yes
+# 무엇이 생길지 먼저 읽습니다(+ aws_vpc.main)
+terraform plan
+# 실제로 만듭니다. 계속할지 물으면 yes 를 칩니다
+terraform apply
 ```
 
 4. 2단계: `step1/main.tf` 에 퍼블릭 서브넷 2개, 인터넷 게이트웨이, 경로표를 직접 더해 봅니다. 막히면 정답 `../step2/main.tf` 를 봅니다(<a href="https://github.com/pghoya2956/guestbook-lab/blob/main/terraform/step2/main.tf" target="_blank" rel="noopener">정답 보기 ↗</a>). 고칠 때마다 `terraform plan` 으로 무엇이 바뀌는지 읽고 `apply` 합니다.
