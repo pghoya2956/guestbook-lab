@@ -19,6 +19,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      # 단원 실습 영상(site/public/video/*.mp4)은 Git LFS 에 있다. 학생 clone 과 ZIP 에는 작은 포인터만 가고,
+      # 런북 빌드만 실제 영상을 받는다. LFS 대역폭을 아끼려고 같은 영상 묶음이면 캐시에서 꺼낸다
+      - run: git lfs ls-files --long | cut -d' ' -f1 | sort > .lfs-ids
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .git/lfs
+          key: lfs-${{ hashFiles('.lfs-ids') }}
+      - run: git lfs pull
       - uses: withastro/action@a8b97df764791eb61fbf3338ef713b0e61ae05c5 # v6.1.4
         with:
           path: site
