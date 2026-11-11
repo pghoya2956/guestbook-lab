@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import starlightImageZoom from 'starlight-image-zoom';
 
 // 학생 실습 런북. https://pghoya2956.github.io/guestbook-lab/ 로 공개한다.
 // 빌드와 배포는 ../.github/workflows/pages.yml 이 main 에 push 할 때 한다.
@@ -18,6 +19,8 @@ export default defineConfig({
 			locales: { root: { label: '한국어', lang: 'ko' } },
 			social: [{ icon: 'github', label: '공통 앱 저장소', href: 'https://github.com/pghoya2956/guestbook-lab' }],
 			customCss: ['./src/styles/custom.css'],
+			// 콘솔 전체 화면 사진은 본문 폭에서 글자가 작아 누르면 크게 보이게 한다.
+			plugins: [starlightImageZoom()],
 			head: [
 				// 예전 한 장짜리 페이지의 단원 주소(/#u7)로 들어오면 단원 페이지(/u7/)로 보낸다.
 				{
