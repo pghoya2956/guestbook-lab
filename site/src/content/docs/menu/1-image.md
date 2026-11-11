@@ -48,7 +48,7 @@ sidebar:
 
       ![검토 및 생성 단계의 정책 이름 칸에 guestbook-image 를 넣은 화면](../../../assets/menu1/policy-name.png)
 
-   4. 맨 아래 주황 「정책 생성」을 누릅니다.
+   4. 맨 아래 「정책 생성」을 누릅니다.
 
       ![검토 및 생성 단계 맨 아래 정책 생성 단추에 표시한 화면](../../../assets/menu1/policy-create.png)
 

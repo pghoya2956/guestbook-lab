@@ -28,7 +28,7 @@ sidebar:
 
    ![CloudShell 에 오류 주소를 50번 부르는 명령을 친 화면](../../../assets/menu5/cloudshell-error.png)
 
-2. 경보 생성 화면을 엽니다. 「지표」 칸의 주황 「지표 선택」을 누릅니다. <a href="https://ap-northeast-2.console.aws.amazon.com/cloudwatch/home?region=ap-northeast-2#alarmsV2:create" target="_blank" rel="noopener">경보 생성 ↗</a>
+2. 경보 생성 화면을 엽니다. 「지표」 칸의 「지표 선택」을 누릅니다. <a href="https://ap-northeast-2.console.aws.amazon.com/cloudwatch/home?region=ap-northeast-2#alarmsV2:create" target="_blank" rel="noopener">경보 생성 ↗</a>
 
 3. 「지표 선택」 창에서 지표를 고릅니다.
    1. 「ApplicationELB」를 누릅니다.
@@ -67,7 +67,7 @@ sidebar:
 
    ![경보 이름 칸에 guestbook-5xx 를 넣은 화면](../../../assets/menu5/alarm-name.png)
 
-7. 4단계 「미리 보기 및 생성」 맨 아래 주황 「경보 생성」을 누릅니다. 처음 상태는 「데이터 부족」입니다.
+7. 4단계 「미리 보기 및 생성」 맨 아래 「경보 생성」을 누릅니다. 처음 상태는 「데이터 부족」입니다.
 
    ![미리 보기 및 생성 맨 아래 경보 생성 단추에 표시한 화면](../../../assets/menu5/alarm-create.png)
 
