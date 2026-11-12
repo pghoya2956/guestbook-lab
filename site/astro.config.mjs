@@ -34,6 +34,7 @@ export default defineConfig({
 				{ label: '1일차', items: units([1, 3, 4, 5, 6, 7, 8]) },
 				{ label: '2일차', items: units([9, 10, 11, 12, 13, 14, 15]) },
 				{ label: '미니 프로젝트 메뉴', items: [{ autogenerate: { directory: 'menu' } }] },
+				{ label: '수업이 끝난 뒤', items: ['after'] },
 			],
 		}),
 	],
