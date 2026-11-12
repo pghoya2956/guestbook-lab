@@ -1,5 +1,5 @@
 #!/bin/bash
-# CloudShell 에 Terraform 을 설치한다(2학년 9단원, 심화 메뉴 7). 홈 디렉터리에 두므로 세션이 끝나도 남는다.
+# CloudShell 에 Terraform 을 설치한다(2학년 9단원, 심화 메뉴 6). 홈 디렉터리에 두므로 세션이 끝나도 남는다.
 set -euo pipefail
 V="${TF_VERSION:-1.14.7}"
 case "$(uname -m)" in

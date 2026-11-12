@@ -1,8 +1,8 @@
 ---
-title: "메뉴 7(심화). VPC 를 코드로 다시 만들기"
+title: "메뉴 6(심화). VPC 를 코드로 다시 만들기"
 sidebar:
-  label: "7. Terraform (심화)"
-  order: 7
+  label: "6. Terraform (심화)"
+  order: 6
 ---
 
 쓰는 서비스: CloudShell, Terraform
@@ -32,7 +32,7 @@ sidebar:
    source ~/.bashrc
    ```
 
-   ![CloudShell 에서 설치 대본 실행, Terraform v1.14.7 출력, source ~/.bashrc 에 번호를 붙여 표시한 화면](../../../assets/menu7/tf-setup.png)
+   ![CloudShell 에서 설치 대본 실행, Terraform v1.14.7 출력, source ~/.bashrc 에 번호를 붙여 표시한 화면](../../../assets/menu6/tf-setup.png)
 
 3. 1단계: VPC 하나만 만듭니다. Terraform 이 받는 AWS 연결 도구가 약 770MB 라서 1GB 인 CloudShell 홈 폴더에 넣으면 자리가 모자랍니다. 그래서 `init` 전에 그 도구를 넣을 곳을 `/tmp` 로 정합니다.
 
@@ -47,7 +47,7 @@ sidebar:
 
    `Terraform has been successfully initialized!` 가 보이면 됩니다.
 
-   ![export TF_DATA_DIR 줄과 Terraform has been successfully initialized 줄에 번호를 붙여 표시한 화면](../../../assets/menu7/tf-init.png)
+   ![export TF_DATA_DIR 줄과 Terraform has been successfully initialized 줄에 번호를 붙여 표시한 화면](../../../assets/menu6/tf-init.png)
 
    ```bash
    # 무엇이 생길지 먼저 읽습니다
@@ -56,7 +56,7 @@ sidebar:
 
    `# aws_vpc.main will be created`(①)와 `Plan: 1 to add`(②)가 보입니다.
 
-   ![terraform plan 출력의 aws_vpc.main will be created 와 Plan: 1 to add 에 번호를 붙여 표시한 화면](../../../assets/menu7/tf-plan.png)
+   ![terraform plan 출력의 aws_vpc.main will be created 와 Plan: 1 to add 에 번호를 붙여 표시한 화면](../../../assets/menu6/tf-plan.png)
 
    ```bash
    # 실제로 만듭니다. 계속할지 물으면 yes 를 칩니다
@@ -65,9 +65,9 @@ sidebar:
 
    `Enter a value:` 에 `yes` 를 치고 Enter 를 누릅니다. `Apply complete! Resources: 1 added` 가 보이면 됩니다.
 
-   ![Enter a value 에 yes 를 친 줄에 표시한 화면](../../../assets/menu7/tf-apply-yes.png)
+   ![Enter a value 에 yes 를 친 줄에 표시한 화면](../../../assets/menu6/tf-apply-yes.png)
 
-   ![Apply complete Resources 1 added 줄에 표시한 화면](../../../assets/menu7/tf-apply-done.png)
+   ![Apply complete Resources 1 added 줄에 표시한 화면](../../../assets/menu6/tf-apply-done.png)
 
 4. 2단계: `step1/main.tf` 에 퍼블릭 서브넷 2개, 인터넷 게이트웨이, 라우팅 테이블을 직접 더해 봅니다. CloudShell 에서 `nano main.tf` 로 엽니다. 막히면 정답 `../step2/main.tf` 를 봅니다(<a href="https://github.com/pghoya2956/guestbook-lab/blob/main/terraform/step2/main.tf" target="_blank" rel="noopener">정답 보기 ↗</a>). 정답을 그대로 쓰려면 아래 명령으로 덮어씁니다.
 
@@ -80,20 +80,20 @@ sidebar:
 
    맨 아래 `Plan: 6 to add, 0 to change, 0 to destroy.` 가 보입니다. VPC 는 이미 있으니 서브넷 2개, 인터넷 게이트웨이, 라우팅 테이블, 서브넷 연결 2개만 더 생깁니다.
 
-   ![Plan 6 to add 0 to change 0 to destroy 줄에 표시한 화면](../../../assets/menu7/tf-plan2.png)
+   ![Plan 6 to add 0 to change 0 to destroy 줄에 표시한 화면](../../../assets/menu6/tf-plan2.png)
 
    ```bash
    # 실제로 만듭니다. 계속할지 물으면 yes 를 칩니다
    terraform apply
    ```
 
-   ![Apply complete Resources 6 added 줄에 표시한 화면](../../../assets/menu7/tf-apply2.png)
+   ![Apply complete Resources 6 added 줄에 표시한 화면](../../../assets/menu6/tf-apply2.png)
 
 ## 확인
 
 VPC 목록에서 이름이 `tf-lab` 인 VPC 의 VPC ID 를 누르고 아래 「리소스 맵」 탭(①)을 봅니다. 서브넷 2개 → `tf-lab-public` 라우팅 테이블 → `tf-lab` 인터넷 게이트웨이로 선이 이어졌는지(②), 10단원에서 손으로 만든 `guestbook-vpc` 와 같은 모양인지 비교합니다. <a href="https://ap-northeast-2.console.aws.amazon.com/vpcconsole/home?region=ap-northeast-2#vpcs:" target="_blank" rel="noopener">VPC 목록 ↗</a>
 
-![tf-lab VPC 의 리소스 맵 탭과 서브넷 2개, tf-lab-public, tf-lab 으로 이어진 선에 번호를 붙여 표시한 화면](../../../assets/menu7/tf-map.png)
+![tf-lab VPC 의 리소스 맵 탭과 서브넷 2개, tf-lab-public, tf-lab 으로 이어진 선에 번호를 붙여 표시한 화면](../../../assets/menu6/tf-map.png)
 
 마지막에 한 번에 지웁니다. 손으로 지울 때와 비교해 봅니다.
 
@@ -102,7 +102,7 @@ VPC 목록에서 이름이 `tf-lab` 인 VPC 의 VPC ID 를 누르고 아래 「�
 terraform destroy
 ```
 
-![Destroy complete Resources 7 destroyed 줄에 표시한 화면](../../../assets/menu7/tf-destroy.png)
+![Destroy complete Resources 7 destroyed 줄에 표시한 화면](../../../assets/menu6/tf-destroy.png)
 
 ## 막히면
 
