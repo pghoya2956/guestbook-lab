@@ -2,7 +2,7 @@
 
 > **실습 런북**: <https://pghoya2956.github.io/guestbook-lab/> 에서 단원을 골라 실습 순서와 복사할 명령, 막혔을 때 고치는 법을 봅니다. 미니 프로젝트 메뉴 안내도 여기 있습니다. 열리지 않으면 같은 내용의 원본 [site/src/content/docs/](site/src/content/docs/) 를 봅니다.
 
-「AWS 클라우드 입문」 실습에서 이틀 동안 키워 가는 방명록 앱입니다. 앱 코드는 거의 바꾸지 않고, 앱이 사는 곳(서버, 네트워크, 저장소, 배포 방식)을 바꿔 가며 AWS를 배웁니다.
+「AWS 클라우드 입문」 실습에서 이틀 동안 키워 가는 급식 리뷰 앱 「오늘 급식」입니다. 화면과 지켜야 할 계약은 [PRODUCT.md](PRODUCT.md) 에 있습니다. 앱 코드는 거의 바꾸지 않고, 앱이 사는 곳(서버, 네트워크, 저장소, 배포 방식)을 바꿔 가며 AWS를 배웁니다.
 
 ## 서버에 올리기
 
@@ -18,7 +18,7 @@ curl -s https://raw.githubusercontent.com/pghoya2956/guestbook-lab/main/deploy/u
 
 | 주소 | 쓰는 곳 |
 |---|---|
-| `/` | 방명록. 맨 위에 응답한 서버 이름과 저장소 종류가 보입니다 |
+| `/` | 급식 리뷰. 맨 위 운영 띠에 응답한 서버 이름과 저장소 종류가 보입니다. `?day=YYYY-MM-DD` 는 그날 리뷰 |
 | `/health` | 로드 밸런서 상태 검사 |
 | `/load?ms=200` | 부하 실습. 요청마다 CPU 를 지정한 시간만큼 씁니다(최대 1000) |
 | `/error` | 관측 실습. 일부러 500 오류를 냅니다 |
@@ -29,8 +29,8 @@ curl -s https://raw.githubusercontent.com/pghoya2956/guestbook-lab/main/deploy/u
 |---|---|
 | `deploy/user-data.sh` | 서버를 켜자마자 앱을 띄우는 대본 |
 | `guestbook.service` | 재부팅해도 앱이 살아 있게 하는 systemd 설정 |
-| `static/` | S3 정적 웹사이트 실습 파일과 공지 `notice.txt` |
-| `lambda/hello/` | 오늘의 한마디 Lambda 함수 |
+| `static/` | S3 정적 웹사이트 실습 파일(`index.html`, `style.css`)과 오늘 메뉴 `notice.txt`. `static/app/`, `static/fonts/` 는 앱 화면이 쓰는 CSS, JS, 글꼴 |
+| `lambda/hello/` | 급식실 한마디(오늘의 한마디) Lambda 함수 |
 | `lambda/api/` | DynamoDB 를 쓰는 서버리스 방명록 API |
 | `Dockerfile`, `deploy/deploy.sh` | 컨테이너 이미지와 ECS 배포 |
 | `.github/workflows/deploy.yml` | push 하면 ECS 로 배포(저장소 변수 `AWS_ROLE_ARN` 필요) |

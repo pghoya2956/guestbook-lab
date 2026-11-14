@@ -4,44 +4,224 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{{ title }}</title>
-<style>
-  body { font-family: -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; max-width: 720px; margin: 0 auto; padding: 24px 16px; color: #142033; background: #f5f4ef; }
-  h1 { margin: 0 0 4px; }
-  .meta { color: #4b5563; font-size: 14px; }
-  .box { background: #fff; border: 1px solid #ddd9ce; border-radius: 12px; padding: 16px; margin: 16px 0; }
-  .notice { border-left: 6px solid #e8822a; }
-  .hello { color: #a9530e; font-weight: 600; }
-  form input, form textarea { width: 100%; box-sizing: border-box; padding: 8px; margin: 4px 0 8px; font: inherit; }
-  button { background: #142033; color: #f5f4ef; border: 0; padding: 10px 18px; border-radius: 8px; font: inherit; cursor: pointer; }
-  .entry { border-top: 1px solid #eae8e0; padding: 12px 0; }
-  .entry img { max-width: 100%; border-radius: 8px; margin-top: 8px; }
-</style>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 34'%3E%3Crect x='1.5' y='5.5' width='31' height='23' rx='5' fill='%232E7D5B'/%3E%3Crect x='5' y='9' width='7' height='7' rx='1.5' fill='%23E6F2EC'/%3E%3Crect x='13.5' y='9' width='7' height='7' rx='1.5' fill='%23E6F2EC'/%3E%3Crect x='22' y='9' width='7' height='7' rx='1.5' fill='%23E6F2EC'/%3E%3Crect x='5' y='18' width='11' height='7' rx='1.5' fill='%23E6F2EC'/%3E%3Crect x='18' y='18' width='11' height='7' rx='3.5' fill='%23E6F2EC'/%3E%3C/svg%3E">
+<link rel="preload" href="{{ url_for('static', filename='fonts/noto-sans-kr-400.woff2') }}" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="{{ url_for('static', filename='app/style.css') }}">
 </head>
 <body>
-  <h1>{{ title }}</h1>
-  <p>{{ intro }}</p>
-  <p class="meta">서버: <b>{{ host }}</b> · 저장소: <b>{{ storage }}</b></p>
+{#- 강사 진척 판정이 본문 앞 8KB 에서 이 줄을 찾는다(13단원 한마디 출처). 화면에는 아래 「급식실 한마디」로 보인다 #}
+<div hidden><p class="hello">오늘의 한마디: {{ hello }}</p></div>
 
-  {% if notice %}<div class="box notice">{{ notice }}</div>{% endif %}
-  <p class="hello">오늘의 한마디: {{ hello }}</p>
-
-  <form class="box" method="post" action="/entries" enctype="multipart/form-data">
-    <input name="name" placeholder="이름" maxlength="30">
-    <textarea name="msg" placeholder="한마디" maxlength="300" required></textarea>
-    {% if image_enabled %}<input type="file" name="image" accept="image/*">{% endif %}
-    <button type="submit">남기기</button>
-  </form>
-
-  <div class="box">
-    {% for e in entries %}
-    <div class="entry">
-      <b>{{ e.name }}</b>
-      <div>{{ e.msg }}</div>
-      {% if e.image_url %}<img src="{{ e.image_url }}" alt="첨부 이미지">{% endif %}
-    </div>
+<div class="ops" role="status" aria-label="서비스 운영 상태">
+  <div class="ops-in">
+    <span class="ops-live"><span class="dot"></span>운영 중</span>
+    <span class="ops-wide">리전 <span class="mono">{{ region }}</span></span>
+    <span class="ops-host"><span class="ops-wide">이 화면을 보낸 </span>서버: <b>{{ host }}</b>{% if az %} ({{ az }}){% endif %}</span>
+    {% if targets %}{% if targets.error %}
+    <span class="ops-warn"><span class="dot dot-warn"></span>서버 상태 읽기 실패 <span class="mono">{{ targets.error }}</span></span>
     {% else %}
-    <p class="meta">아직 글이 없습니다.</p>
-    {% endfor %}
+    <span>서버 <strong>{{ targets.healthy }}/{{ targets.total }}</strong><span class="ops-wide"> 정상</span></span>
+    {% endif %}{% endif %}
+    <span class="{{ 'ops-warn' if store_error else 'ops-store' }}">{% if store_error %}<span class="dot dot-warn"></span>{% endif %}저장소: <b>{{ storage }}</b>{% if store_error %} 오류{% endif %}</span>
+    <a class="ops-health mono" href="/health" data-health>/health</a>
   </div>
+</div>
+
+<header class="top">
+  <div class="top-in">
+    <div class="top-row">
+      <a class="brand" href="/">
+        <svg aria-hidden="true" width="34" height="34" viewBox="0 0 34 34" fill="none"><rect x="1.5" y="5.5" width="31" height="23" rx="5" fill="#2E7D5B"/><rect x="5" y="9" width="7" height="7" rx="1.5" fill="#E6F2EC"/><rect x="13.5" y="9" width="7" height="7" rx="1.5" fill="#E6F2EC"/><rect x="22" y="9" width="7" height="7" rx="1.5" fill="#E6F2EC"/><rect x="5" y="18" width="11" height="7" rx="1.5" fill="#E6F2EC"/><rect x="18" y="18" width="11" height="7" rx="3.5" fill="#E6F2EC"/></svg>
+        <span class="brand-text">
+          <span class="brand-name">{{ title }}</span>
+          <span class="brand-intro">{{ intro }}</span>
+        </span>
+      </a>
+      <nav class="day" aria-label="날짜 이동">
+        <a class="day-btn" href="/?day={{ prev_day }}" aria-label="전날 리뷰"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></a>
+        <span class="day-label"><span class="day-long">{{ day_long }} {{ meal }}</span><span class="day-short">{{ day_short }} {{ meal }}</span></span>
+        {% if next_day is none %}
+        <span class="day-btn" aria-disabled="true" title="오늘이 마지막 날입니다"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></span>
+        {% else %}
+        <a class="day-btn" href="/{% if next_day %}?day={{ next_day }}{% endif %}" aria-label="다음 날 리뷰"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></a>
+        {% endif %}
+      </nav>
+    </div>
+    <nav class="tabs" aria-label="보기">
+      <a href="#menu" aria-current="page">{{ '오늘 메뉴' if not day else '그날 메뉴' }}</a>
+      <a href="#reviews">리뷰 <strong>{{ review_count }}</strong></a>
+      <a href="#photos">사진 <strong>{{ photos|length }}</strong></a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="split">
+    <section class="menu" id="menu" aria-labelledby="menu-h">
+      <div class="menu-head">
+        <h1 id="menu-h">{{ '오늘 메뉴' if not day else day_long ~ ' 메뉴' }}</h1>
+        {% if menu and menu.kcal and not day %}<span class="kcal"><strong>{{ menu.kcal }}</strong>{% if menu.kcal.isdigit() %} kcal{% endif %}</span>{% endif %}
+      </div>
+
+      {% if day %}
+      <div class="tray tray-empty" aria-hidden="true">{% for _ in range(3) %}<div class="slot slot-empty"></div>{% endfor %}<div class="tray-bottom"><div class="slot slot-empty"></div><div class="slot slot-soup slot-empty"></div></div></div>
+      <p class="tray-note">지난 메뉴는 보관하지 않습니다. notice.txt 에는 오늘 메뉴 하나만 있습니다. 아래에 이날 남긴 리뷰만 모았습니다. <a href="/">오늘로 돌아가기</a></p>
+
+      {% elif menu %}
+      <div class="tray">
+        {% for d in menu.sides %}
+        <div class="slot{{ ' slot-top' if d.top }}">
+          {% if d.top %}<span class="badge">리뷰 가장 많음</span>{% endif %}
+          <span class="dish">{{ d.name }}</span>
+          <span class="allergy">알레르기 {{ d.allergy or '없음' }}</span>
+          <span class="count">리뷰 <strong>{{ d.reviews }}</strong></span>
+        </div>
+        {% endfor %}
+        {% for _ in range(menu.empty_sides) %}<div class="slot slot-empty"><span class="slot-hint">반찬 칸</span></div>{% endfor %}
+        <div class="tray-bottom">
+          {% for d, kind, hint in [(menu.rice, '', '밥 칸'), (menu.soup, ' slot-soup', '국 칸')] %}
+          {% if d %}
+          <div class="slot{{ kind }}{{ ' slot-top' if d.top }}">
+            {% if d.top %}<span class="badge">리뷰 가장 많음</span>{% endif %}
+            <span class="dish">{{ d.name }}</span>
+            <span class="allergy">알레르기 {{ d.allergy or '없음' }}</span>
+            <span class="count">리뷰 <strong>{{ d.reviews }}</strong></span>
+          </div>
+          {% else %}
+          <div class="slot{{ kind }} slot-empty"><span class="slot-hint">{{ hint }}</span></div>
+          {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+      <div class="menu-foot">
+        {% if menu.dessert %}<span>후식 <strong>{{ menu.dessert.name }}</strong>{% if menu.dessert.reviews %}, 리뷰 {{ menu.dessert.reviews }}{% endif %}</span>{% endif %}
+        <span>메뉴는 S3 의 <span class="mono ink">notice.txt</span> 에서 {{ read_at }} 에 읽었습니다</span>
+      </div>
+      {% if menu.notes %}<div class="notice"><span class="notice-tag">공지</span><p>{{ menu.notes|join('\n') }}</p></div>{% endif %}
+
+      {% else %}
+      {% if notice_state == 'ok' and notice %}
+      <div class="notice"><span class="notice-tag">공지</span><p>{{ notice }}</p></div>
+      {% elif notice_state == 'error' %}
+      <div class="notice notice-error" role="alert"><span class="notice-tag">메뉴 오류</span><p>{{ notice }}<br><span class="sub">서버 역할이 공지 버킷의 notice.txt 를 읽을 수 있는지, NOTICE_BUCKET 에 적은 버킷 이름이 맞는지 봅니다.</span></p></div>
+      {% endif %}
+      <div class="tray tray-empty" aria-hidden="true">{% for _ in range(3) %}<div class="slot slot-empty"></div>{% endfor %}<div class="tray-bottom"><div class="slot slot-empty"></div><div class="slot slot-soup slot-empty"></div></div></div>
+      <p class="tray-note">
+        {% if notice_state == 'missing' %}아직 오늘 메뉴가 없습니다. S3 버킷에 notice.txt 를 올리고 config.env 의 NOTICE_BUCKET 에 버킷 이름을 적으면 식판이 채워집니다.
+        {% elif notice_state == 'ok' %}notice.txt 를 <span class="mono ink">밥|현미밥|</span> 처럼 「칸|음식|알레르기」 줄로 적으면 식판 칸이 채워집니다.
+        {% else %}메뉴를 읽으면 식판 칸이 채워집니다.{% endif %}
+      </p>
+      {% endif %}
+    </section>
+
+    <aside class="side">
+      <form class="write" id="write" method="post" action="/entries" enctype="multipart/form-data" aria-labelledby="write-h">
+        <h2 id="write-h">리뷰 남기기</h2>
+        {% if form_error %}<p class="form-error" role="alert">리뷰를 저장하지 못했습니다. 서버에서 <span class="mono">journalctl -u guestbook</span> 끝부분의 오류 이름을 봅니다.</p>{% endif %}
+        <div class="write-extra">
+          <label class="field">별명
+            <input name="name" type="text" maxlength="30" placeholder="이름 대신 별명" autocomplete="nickname">
+          </label>
+          {% if dish_names %}
+          <label class="field">어떤 메뉴
+            <select name="dish">
+              <option value="">고르지 않음</option>
+              {% for n in dish_names %}<option>{{ n }}</option>{% endfor %}
+            </select>
+          </label>
+          {% endif %}
+        </div>
+        <label class="field field-msg"><span class="field-label">한줄평</span>
+          <textarea name="msg" rows="3" maxlength="300" required placeholder="{{ (dish_names[0] ~ ' 맛이 어땠나요?') if dish_names else '오늘 급식 한줄평' }}"></textarea>
+        </label>
+        <div class="write-actions">
+          {% if image_enabled %}
+          <label class="photo-btn">
+            <svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
+            <span class="photo-text" data-photo-text>급식 사진</span>
+            <input class="sr-only" type="file" name="image" accept="image/*" data-photo>
+          </label>
+          {% endif %}
+          <button type="submit"><span class="wide-only">리뷰 </span>올리기</button>
+        </div>
+      </form>
+
+      <section class="hello-card" aria-labelledby="hello-h">
+        <div class="hello-head">
+          <h2 id="hello-h">급식실 한마디</h2>
+          <span class="hello-src">{% if hello_source == 'lambda' %}Lambda <span class="wide-only">가 </span>{{ hello_ms }}ms<span class="wide-only"> 에 답함</span>{% elif hello_source == 'error' %}Lambda <span class="wide-only">를 부르지 못함</span><span class="narrow-only">오류</span>{% else %}앱 기본 문장<span class="wide-only">, Lambda 연결 전</span>{% endif %}</span>
+        </div>
+        <p class="hello-text">{{ hello }}</p>
+      </section>
+    </aside>
+  </div>
+
+  <section class="reviews" id="reviews" aria-labelledby="rev-h">
+    <div class="rev-head">
+      <h2 id="rev-h">{% if day %}{{ day_long }} 리뷰{% else %}리뷰{% endif %} {{ review_count }}</h2>
+      <div class="filters" role="group" aria-label="리뷰 보기">
+        {% set q = '?day=' ~ day.isoformat() if day else '' %}
+        <a class="chip" href="/{{ q }}#reviews"{% if view == 'all' %} aria-current="true"{% endif %}>전체</a>
+        <a class="chip" href="/{{ q ~ ('&' if q else '?') }}view=photo#reviews"{% if view == 'photo' %} aria-current="true"{% endif %}>사진 리뷰</a>
+        <span class="chip chip-static">최신순</span>
+      </div>
+    </div>
+
+    {% if photos %}
+    <div class="photos" id="photos">
+      {% for p in photos[:4] %}
+      <figure>
+        <a href="{{ p.image_url }}"><img src="{{ p.image_url }}" alt="{{ p.dish or '급식' }} 사진, {{ p.name }} 리뷰" loading="lazy"></a>
+        <figcaption>{{ p.name }}{% if p.dish %}, {{ p.dish }}{% endif %}</figcaption>
+      </figure>
+      {% endfor %}
+    </div>
+    {% else %}<span id="photos"></span>{% endif %}
+
+    {% if store_error %}
+    <div class="state state-error" role="alert">
+      <p class="state-title">리뷰 저장소 <span class="mono">{{ storage }}</span> 에 연결하지 못했습니다</p>
+      <p>오류 이름 <span class="mono ink">{{ store_error }}</span>. 서버에서 <span class="mono">journalctl -u guestbook</span> 끝부분을 보면 원인이 나옵니다. 권한 오류면 서버 역할의 정책을, 이름 오류면 config.env 의 테이블과 접속 정보를 봅니다.</p>
+    </div>
+    {% elif reviews %}
+    <ul class="rev-list">
+      {% for r in reviews %}
+      <li>
+        <div class="avatar" aria-hidden="true" style="background: {{ r.tint }}">{{ r.name[:1] }}</div>
+        <div class="rev-body">
+          <div class="rev-meta">
+            <span class="rev-name">{{ r.name }}</span>
+            {% if r.dish %}<span class="rev-dish">{{ r.dish }}</span>{% endif %}
+            <span class="rev-ago">{{ r.ago }}</span>
+            {% if r.host %}<span class="rev-host">받은 서버 <span class="mono">{{ r.host }}</span></span>{% endif %}
+          </div>
+          <p class="rev-msg">{{ r.msg }}</p>
+        </div>
+        {% if r.image_url %}<a class="rev-thumb" href="{{ r.image_url }}"><img src="{{ r.image_url }}" alt="{{ r.name }} 님이 올린 급식 사진" loading="lazy"></a>{% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <div class="state">
+      {% if view == 'photo' %}
+      <p class="state-title">아직 사진 리뷰가 없습니다</p>
+      <p>{% if image_enabled %}리뷰를 남길 때 「급식 사진」으로 사진을 붙이면 여기에 모입니다.{% else %}config.env 의 IMAGE_BUCKET 에 사진 버킷 이름을 적으면 리뷰에 사진을 붙일 수 있습니다.{% endif %}</p>
+      {% elif day %}
+      <p class="state-title">{{ day_long }}에 남긴 리뷰가 없습니다</p>
+      <p>이 저장소({{ storage }})에 그날 쓴 글이 없습니다.</p>
+      {% else %}
+      <p class="state-title">아직 리뷰가 없습니다</p>
+      <p>첫 리뷰를 남기면 여기에 별명, 한줄평과 함께 리뷰를 받은 서버 이름이 보입니다.</p>
+      {% endif %}
+    </div>
+    {% endif %}
+  </section>
+
+  <footer class="foot">
+    <span>리뷰는 <span class="mono">{{ storage }}</span> 저장소에, 사진은 S3 <span class="mono">images/</span> 에 남습니다.</span>
+    <span class="foot-right"><span class="mono">{{ host }}</span> 에서 {{ render_ms }}ms 에 만든 화면, <span class="mono">v{{ version }}</span></span>
+  </footer>
+</main>
+<script src="{{ url_for('static', filename='app/app.js') }}" defer></script>
 </body>
 </html>

@@ -104,3 +104,27 @@ def test_mysql_store_reads_params_and_round_trips(monkeypatch, mysql_port):
     c.post("/entries", data={"name": "지민", "msg": "마이에스큐엘"})
     assert "마이에스큐엘" in c.get("/").get_data(as_text=True)
     assert c.get("/health").get_json()["storage"] == "mysql"
+
+
+@mock_aws
+def test_mysql_adds_new_columns_to_old_table(monkeypatch, mysql_port):
+    """방명록 때 만든 entries 테이블(host, dish 칸 없음)에 앱이 칸을 더하고, 예전 글도 읽힌다."""
+    import boto3
+    import pymysql
+
+    with pymysql.connect(host="127.0.0.1", port=mysql_port, user="root", password="pw", database="guestbook") as c:
+        with c.cursor() as cur:
+            cur.execute("CREATE TABLE entries (id VARCHAR(36) PRIMARY KEY, ts BIGINT, name VARCHAR(30),"
+                        " msg VARCHAR(300), image_key VARCHAR(200))")
+            cur.execute("INSERT INTO entries VALUES ('old', 1, '민수', '방명록 때 글', '')")
+        c.commit()
+    ssm = boto3.client("ssm", region_name="ap-northeast-2")
+    ssm.put_parameter(Name="/guestbook/db/host", Type="String", Value="127.0.0.1")
+    ssm.put_parameter(Name="/guestbook/db/password", Type="SecureString", Value="pw")
+    app = _load(monkeypatch, STORAGE="mysql", DB_USER="root", DB_PORT=str(mysql_port))
+    c = app.app.test_client()
+    c.post("/entries", data={"name": "지민", "msg": "새 글", "dish": "닭갈비"})
+    items = app.store.list()
+    assert [i["msg"] for i in items] == ["새 글", "방명록 때 글"]
+    assert items[0]["dish"] == "닭갈비" and items[0]["host"] and items[1]["host"] == "" and items[1]["dish"] == ""
+    _load(monkeypatch, STORAGE="mysql", DB_USER="root", DB_PORT=str(mysql_port))  # 두 번 켜도 칸을 다시 더하지 않는다

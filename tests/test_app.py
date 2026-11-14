@@ -37,7 +37,7 @@ def test_post_entry_then_listed(client):
 
 def test_empty_message_is_ignored(client):
     client.post("/entries", data={"name": "민수", "msg": "  "})
-    assert "아직 글이 없습니다" in client.get("/").get_data(as_text=True)
+    assert "아직 리뷰가 없습니다" in client.get("/").get_data(as_text=True)
 
 
 def test_health_ok(client):
