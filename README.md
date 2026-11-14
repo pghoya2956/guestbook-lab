@@ -31,7 +31,7 @@ curl -s https://raw.githubusercontent.com/pghoya2956/guestbook-lab/main/deploy/u
 | `guestbook.service` | 재부팅해도 앱이 살아 있게 하는 systemd 설정 |
 | `static/` | S3 정적 웹사이트 실습 파일(`index.html`, `style.css`)과 오늘 메뉴 `notice.txt`. `static/app/`, `static/fonts/` 는 앱 화면이 쓰는 CSS, JS, 글꼴 |
 | `lambda/hello/` | 급식실 한마디(오늘의 한마디) Lambda 함수 |
-| `lambda/api/` | DynamoDB 를 쓰는 서버리스 방명록 API |
+| `lambda/api/` | DynamoDB 를 쓰는 서버리스 리뷰 API |
 | `Dockerfile`, `deploy/deploy.sh` | 컨테이너 이미지와 ECS 배포 |
 | `.github/workflows/deploy.yml` | push 하면 ECS 로 배포(저장소 변수 `AWS_ROLE_ARN` 필요) |
 | `terraform/setup-terraform.sh` | CloudShell 에 Terraform 설치 |

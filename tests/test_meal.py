@@ -321,3 +321,62 @@ def test_photo_upload_goes_under_images_and_target_health(monkeypatch, tmp_path)
     assert len(keys) == 1 and keys[0].startswith("images/") and keys[0].endswith(".png")
     body = c.get("/?view=photo").get_data(as_text=True)
     assert "rev-thumb" in body and "서버 상태 읽기 실패" in body
+
+
+@mock_aws
+def test_tray_slot_shows_latest_photo_review_of_that_dish(monkeypatch, tmp_path):
+    """칸 사진은 그 메뉴를 고른 사진 리뷰 가운데 가장 최근 것이다. 사진 리뷰가 없는 칸에는 사진이 없다."""
+    import io
+
+    import boto3
+
+    _notice_bucket(MENU)
+    boto3.client("s3", region_name="ap-northeast-2").create_bucket(
+        Bucket="img-test", CreateBucketConfiguration={"LocationConstraint": "ap-northeast-2"})
+    app = _load(monkeypatch, tmp_path, NOTICE_BUCKET="notice-test", IMAGE_BUCKET="img-test")
+    c = app.app.test_client()
+    body = c.get("/").get_data(as_text=True)
+    assert "slot-img" not in body and "식판의 그 칸이 내 사진으로" in body
+    c.post("/entries", data={"name": "첫째", "msg": "a", "dish": "닭갈비", "image": (io.BytesIO(b"1"), "a.jpg")},
+           content_type="multipart/form-data")
+    c.post("/entries", data={"name": "글만", "msg": "b", "dish": "닭갈비"})
+    c.post("/entries", data={"name": "메뉴없음", "msg": "c", "image": (io.BytesIO(b"2"), "b.jpg")},
+           content_type="multipart/form-data")
+    body = c.get("/").get_data(as_text=True)
+    assert body.count('class="slot-img"') == 1 and "첫째 님이 올린 닭갈비 사진" in body
+    time.sleep(1.1)  # ts 는 초 단위다
+    c.post("/entries", data={"name": "둘째", "msg": "d", "dish": "닭갈비", "image": (io.BytesIO(b"3"), "c.jpg")},
+           content_type="multipart/form-data")
+    body = c.get("/").get_data(as_text=True)
+    assert "둘째 님이 올린 닭갈비 사진" in body and "첫째 님이 올린 닭갈비 사진" not in body
+    newest = json.loads((tmp_path / "entries.json").read_text(encoding="utf-8"))[-1]["image_key"]
+    src = re.search(r'class="slot-img" src="([^"]+)"', body)[1]
+    assert newest.startswith("images/") and newest in src  # 칸 사진 주소가 가장 최근 사진을 가리킨다
+    assert body.count('class="slot-img"') == 1  # 다른 칸은 그대로 글자만
+
+
+@mock_aws
+def test_tied_counts_mark_no_top_slot(monkeypatch, tmp_path):
+    """리뷰 수가 같은 칸끼리 겨루면 「리뷰 가장 많음」을 붙이지 않는다(모든 칸에 붙는 것을 막는다)."""
+    _notice_bucket(MENU)
+    app = _load(monkeypatch, tmp_path, NOTICE_BUCKET="notice-test")
+    c = app.app.test_client()
+    for dish in ("닭갈비", "현미밥"):
+        c.post("/entries", data={"name": "a", "msg": "b", "dish": dish})
+    body = c.get("/").get_data(as_text=True)
+    assert "리뷰 가장 많음" not in body and "slot-top" not in body
+    c.post("/entries", data={"name": "a", "msg": "b", "dish": "현미밥"})
+    assert c.get("/").get_data(as_text=True).count("리뷰 가장 많음") == 1
+
+
+@mock_aws
+def test_dessert_does_not_take_the_tray_badge(monkeypatch, tmp_path):
+    """후식은 식판 칸이 없다. 후식 리뷰가 가장 많아도 식판 칸 가운데 가장 많은 칸에 강조가 붙는다."""
+    _notice_bucket(MENU)
+    app = _load(monkeypatch, tmp_path, NOTICE_BUCKET="notice-test")
+    c = app.app.test_client()
+    for dish in ("귤", "귤", "귤", "닭갈비"):
+        c.post("/entries", data={"name": "a", "msg": "b", "dish": dish})
+    body = c.get("/").get_data(as_text=True)
+    assert body.count("리뷰 가장 많음") == 1 and body.count("slot-top") == 1
+    assert body.index("닭갈비", body.index("리뷰 가장 많음")) < body.index("콩나물무침")

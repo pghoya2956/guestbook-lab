@@ -7,13 +7,13 @@ sidebar:
 
 쓰는 서비스: RDS, Parameter Store, 보안 그룹
 
-완료 기준: 페이지에 `저장소: mysql` 이 보이고, 글을 쓴 뒤 앱을 다시 켜도 글이 남아 있다
+완료 기준: 맨 위 띠에 `저장소: mysql` 이 보이고, 리뷰를 쓴 뒤 앱을 다시 켜도 리뷰가 남아 있다
 
 2학년과 빨리 끝낸 학생용입니다. DB 만들기에 약 5분 걸리니 **1번부터 바로 시작**하고 기다리는 동안 2~4번을 합니다.
 
 ## 바뀌는 구조
 
-글을 서버 디스크 대신 RDS MySQL 에 저장합니다. DB 는 인터넷에 열지 않고, 방명록 서버의 보안 그룹에서 오는 연결만 받습니다. DB 주소와 비밀번호는 코드나 설정 파일이 아니라 Parameter Store 에 두고 앱이 실행될 때 읽어 갑니다.
+리뷰를 서버 디스크 대신 RDS MySQL 에 저장합니다. DB 는 인터넷에 열지 않고, 급식 리뷰 앱 서버의 보안 그룹에서 오는 연결만 받습니다. DB 주소와 비밀번호는 코드나 설정 파일이 아니라 Parameter Store 에 두고 앱이 실행될 때 읽어 갑니다.
 
 ## 만들 것
 
@@ -46,7 +46,7 @@ sidebar:
 
       ![데이터베이스 생성 화면 맨 아래 데이터베이스 생성 단추에 표시한 화면](../../../assets/menu5/rds-create.png)
 
-2. DB 보안 그룹이 방명록 서버만 받게 고칩니다. <a href="https://ap-northeast-2.console.aws.amazon.com/ec2/home?region=ap-northeast-2#SecurityGroups:" target="_blank" rel="noopener">보안 그룹 ↗</a>
+2. DB 보안 그룹이 급식 리뷰 앱 서버만 받게 고칩니다. <a href="https://ap-northeast-2.console.aws.amazon.com/ec2/home?region=ap-northeast-2#SecurityGroups:" target="_blank" rel="noopener">보안 그룹 ↗</a>
    1. 보안 그룹 목록에서 `guestbook-db` 행을 체크(①)하고 「작업」(②) → 「인바운드 규칙 편집」(③)을 누릅니다.
 
       ![보안 그룹 목록에서 guestbook-db 행 체크, 작업 메뉴, 인바운드 규칙 편집에 번호를 붙여 표시한 화면](../../../assets/menu5/sg-edit-menu.png)
@@ -55,7 +55,7 @@ sidebar:
 
       ![인바운드 규칙 편집에서 처음 규칙의 삭제 단추와 규칙 추가 단추에 번호를 붙여 표시한 화면. IP 주소는 가렸습니다](../../../assets/menu5/sg-delete-add.png)
 
-   3. 새 줄의 「유형」(①)을 「MYSQL/Aurora」로 고릅니다. 「소스」 칸에 `guestbook-web` 을 쳐서 목록에 나온 보안 그룹(②)을 고릅니다(11단원 시작 템플릿에서 만든 방명록 서버의 보안 그룹). 「규칙 저장」(③)을 누릅니다.
+   3. 새 줄의 「유형」(①)을 「MYSQL/Aurora」로 고릅니다. 「소스」 칸에 `guestbook-web` 을 쳐서 목록에 나온 보안 그룹(②)을 고릅니다(11단원 시작 템플릿에서 만든 앱 서버의 보안 그룹). 「규칙 저장」(③)을 누릅니다.
 
       ![유형 MYSQL/Aurora, 소스 guestbook-web 보안 그룹, 규칙 저장 단추에 번호를 붙여 표시한 화면](../../../assets/menu5/sg-source.png)
 
@@ -141,13 +141,13 @@ sidebar:
 
 ## 확인
 
-로드 밸런서 주소는 두 서버를 번갈아 보여 주니 고친 서버의 공인 IP 로 엽니다. 인스턴스 목록에서 그 서버 행을 체크하고 「퍼블릭 IPv4 주소」를 새 탭에 `http://공인IP` 로 엽니다([9단원](/guestbook-lab/u9/) 9번과 같은 자리). 「서버:」 줄(①)에 `저장소: mysql` 이 보이면 글을 하나 씁니다. 앱을 다시 켜고(`sudo systemctl restart guestbook`) 새로고침해도 그 글(②)이 남아 있으면 완료입니다.
+로드 밸런서 주소는 두 서버를 번갈아 보여 주니 고친 서버의 공인 IP 로 엽니다. 인스턴스 목록에서 그 서버 행을 체크하고 「퍼블릭 IPv4 주소」를 새 탭에 `http://공인IP` 로 엽니다([9단원](/guestbook-lab/u9/) 9번과 같은 자리). 맨 위 검은 띠(①)에 `저장소: mysql` 이 보이면 리뷰를 하나 씁니다. 앱을 다시 켜고(`sudo systemctl restart guestbook`) 새로고침해도 그 리뷰(②)가 남아 있으면 완료입니다.
 
-![서버 줄의 저장소 mysql 과 MySQL 에 저장한 글에 번호를 붙여 표시한 방명록 화면](../../../assets/menu5/app-mysql.png)
+![맨 위 띠의 저장소 mysql 과 MySQL 에 저장한 리뷰에 번호를 붙여 표시한 화면](../../../assets/menu5/app-mysql.png)
 
 ## 막히면
 
-- 페이지가 열리지 않거나 `500`: 서버에서 아래 명령으로 앱 기록을 봅니다. 앱은 실행하며 일어난 일을 일기장처럼 기록해 두고, `journalctl` 은 그 일기장을 보는 명령입니다. 끝부분의 오류 이름으로 원인을 찾습니다.
+- 페이지가 열리지 않거나, 리뷰 자리에 「리뷰 저장소 mysql 에 연결하지 못했습니다」가 나옵니다: 서버에서 아래 명령으로 앱 기록을 봅니다. 앱은 실행하며 일어난 일을 일기장처럼 기록해 두고, `journalctl` 은 그 일기장을 보는 명령입니다. 끝부분의 오류 이름으로 원인을 찾습니다.
 
   ```bash
   # 앱이 남긴 일기장(기록)의 마지막 30줄을 봅니다

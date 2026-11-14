@@ -11,7 +11,7 @@ sidebar:
 
 ## 바뀌는 구조
 
-오토 스케일링 그룹에 「평균 CPU 사용률을 30%로 유지」 목표를 줍니다. 바빠지면 AWS가 서버를 늘리고, 한가해지면 줄입니다. 방명록 앱은 서버의 CPU 두 개 중 하나만 쓰기 때문에 아무리 바빠도 평균 CPU 가 50% 근처에서 멈춥니다. 그래서 목표를 50 보다 낮은 30 으로 둡니다.
+오토 스케일링 그룹에 「평균 CPU 사용률을 30%로 유지」 목표를 줍니다. 바빠지면 AWS가 서버를 늘리고, 한가해지면 줄입니다. 급식 리뷰 앱은 서버의 CPU 두 개 중 하나만 쓰기 때문에 아무리 바빠도 평균 CPU 가 50% 근처에서 멈춥니다. 그래서 목표를 50 보다 낮은 30 으로 둡니다.
 
 다른 메뉴(1, 2, 3)를 했다면 이 메뉴를 **맨 마지막에** 합니다. 부하가 끝나고 서버를 줄일 때 오토 스케일링이 손으로 설정을 고친 서버를 지울 수 있습니다(아래 「막히면」).
 
@@ -37,7 +37,7 @@ sidebar:
 
    ![콘솔 왼쪽 아래 CloudShell 단추에 표시한 화면](../../../assets/menu/cloudshell-open.png)
 
-   `ab` 는 웹사이트에 요청을 쏟아부어 보는 시험 도구입니다. 아래 명령에서 `-t 300` 은 300초(5분) 동안, `-c 20` 은 요청을 동시에 20개씩 보낸다는 뜻입니다. `/load?ms=200` 은 요청 하나마다 서버 CPU 를 0.2초 바쁘게 만드는 방명록 앱 주소입니다.
+   `ab` 는 웹사이트에 요청을 쏟아부어 보는 시험 도구입니다. 아래 명령에서 `-t 300` 은 300초(5분) 동안, `-c 20` 은 요청을 동시에 20개씩 보낸다는 뜻입니다. `/load?ms=200` 은 요청 하나마다 서버 CPU 를 0.2초 바쁘게 만드는 급식 리뷰 앱 주소입니다.
 
    ```bash
    # 부하를 거는 도구 ab 를 설치합니다
@@ -52,7 +52,7 @@ sidebar:
 
 ## 확인
 
-부하를 건 뒤 4~5분이면 서버가 한 대 늘어납니다(실측 4분). 늘었는지는 부하를 거는 중에 확인합니다. `guestbook-asg` 의 「활동」 탭을 새로 고침하면 「Launching a new EC2 instance」 줄이 생기고 설명에 `AlarmHigh` 와 `increasing the capacity from 2 to 3` 이 보입니다. 방명록을 새로고침하면 처음 보는 서버 이름이 섞여 나옵니다. 늘어나는 데 몇 분 걸렸는지 적어 두고 발표에서 말합니다. <a href="https://ap-northeast-2.console.aws.amazon.com/ec2/home?region=ap-northeast-2#AutoScalingGroups:" target="_blank" rel="noopener">콘솔 열기 ↗</a>
+부하를 건 뒤 4~5분이면 서버가 한 대 늘어납니다(실측 4분). 늘었는지는 부하를 거는 중에 확인합니다. `guestbook-asg` 의 「활동」 탭을 새로 고침하면 「Launching a new EC2 instance」 줄이 생기고 설명에 `AlarmHigh` 와 `increasing the capacity from 2 to 3` 이 보입니다. 급식 리뷰 앱을 새로고침하면 맨 위 띠에 처음 보는 서버 이름이 섞여 나옵니다. 늘어나는 데 몇 분 걸렸는지 적어 두고 발표에서 말합니다. <a href="https://ap-northeast-2.console.aws.amazon.com/ec2/home?region=ap-northeast-2#AutoScalingGroups:" target="_blank" rel="noopener">콘솔 열기 ↗</a>
 
 ![활동 탭에서 AlarmHigh 경보로 서버 수를 2에서 3, 3에서 4로 늘린 Launching 두 줄에 표시한 화면](../../../assets/menu3/asg-activity.png)
 

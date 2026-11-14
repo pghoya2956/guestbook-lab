@@ -226,18 +226,28 @@ def _menu_view(notice_state, notice_text, reviews):
     menu = parse_menu(notice_text) if notice_state == "ok" else None
     if not menu:
         return None, []
-    counts = {}
+    counts, photos = {}, {}
     today = today_kst()
-    for r in reviews:
+    for r in reviews:  # reviews 는 최신 글이 앞이다
         # 김치처럼 매일 나오는 반찬이 지난 리뷰로 쌓이지 않게 오늘 리뷰만 센다
         if r["dish"] and datetime.fromtimestamp(r["ts"], KST).date() == today:
             counts[r["dish"]] = counts.get(r["dish"], 0) + 1
+        # 칸 사진은 그 메뉴를 고른 사진 리뷰 가운데 가장 최근 것이다. 없으면 칸은 글자만 보인다
+        if r["dish"] and r["image_key"] and r["dish"] not in photos:
+            photos[r["dish"]] = r
     dishes = [d for d in [*menu["sides"], menu["rice"], menu["soup"], menu["dessert"]] if d]
     for d in dishes:
         d["reviews"] = counts.get(d["name"], 0)
-    top = max((d["reviews"] for d in dishes), default=0)
+        p = photos.get(d["name"])
+        d["photo"] = image_url(p["image_key"]) if p else ""
+        d["photo_by"] = p["name"] if p else ""
+    # 리뷰가 가장 많은 식판 칸이 하나일 때만 강조한다. 같은 수로 겨루면 모든 칸에 붙어 뜻이 없어진다.
+    # 후식은 식판 칸이 없어(아래 글줄) 겨루지 않는다
+    slots = [d for d in [*menu["sides"], menu["rice"], menu["soup"]] if d]
+    top = max((d["reviews"] for d in slots), default=0)
+    unique = sum(d["reviews"] == top for d in slots) == 1
     for d in dishes:
-        d["top"] = top > 0 and d["reviews"] == top
+        d["top"] = top > 0 and unique and any(d is s for s in slots) and d["reviews"] == top
     # 반찬 칸은 세 칸씩 한 줄이다. 모자라는 칸은 빈 칸으로 채워 식판 모양을 지킨다
     menu["empty_sides"] = max(3 - len(menu["sides"]), -len(menu["sides"]) % 3)
     return menu, [d["name"] for d in dishes]

@@ -70,7 +70,8 @@
       {% elif menu %}
       <div class="tray">
         {% for d in menu.sides %}
-        <div class="slot{{ ' slot-top' if d.top }}">
+        <div class="slot{{ ' slot-top' if d.top }}{{ ' slot-photo' if d.photo }}">
+          {% if d.photo %}<img class="slot-img" src="{{ d.photo }}" alt="{{ d.photo_by }} 님이 올린 {{ d.name }} 사진">{% endif %}
           {% if d.top %}<span class="badge">리뷰 가장 많음</span>{% endif %}
           <span class="dish">{{ d.name }}</span>
           <span class="allergy">알레르기 {{ d.allergy or '없음' }}</span>
@@ -81,7 +82,8 @@
         <div class="tray-bottom">
           {% for d, kind, hint in [(menu.rice, '', '밥 칸'), (menu.soup, ' slot-soup', '국 칸')] %}
           {% if d %}
-          <div class="slot{{ kind }}{{ ' slot-top' if d.top }}">
+          <div class="slot{{ kind }}{{ ' slot-top' if d.top }}{{ ' slot-photo' if d.photo }}">
+            {% if d.photo %}<img class="slot-img" src="{{ d.photo }}" alt="{{ d.photo_by }} 님이 올린 {{ d.name }} 사진">{% endif %}
             {% if d.top %}<span class="badge">리뷰 가장 많음</span>{% endif %}
             <span class="dish">{{ d.name }}</span>
             <span class="allergy">알레르기 {{ d.allergy or '없음' }}</span>
@@ -130,6 +132,7 @@
             </select>
           </label>
           {% endif %}
+          {% if image_enabled and dish_names %}<p class="write-hint">메뉴를 고르고 사진을 올리면 식판의 그 칸이 내 사진으로 바뀝니다.</p>{% endif %}
         </div>
         <label class="field field-msg"><span class="field-label">한줄평</span>
           <textarea name="msg" rows="3" maxlength="300" required placeholder="{{ (dish_names[0] ~ ' 맛이 어땠나요?') if dish_names else '오늘 급식 한줄평' }}"></textarea>

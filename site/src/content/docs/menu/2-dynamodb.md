@@ -7,11 +7,11 @@ sidebar:
 
 쓰는 서비스: DynamoDB
 
-완료 기준: 글이 테이블에 쌓이고, 서버 두 대가 같은 글을 보여 준다
+완료 기준: 리뷰가 테이블에 쌓이고, 서버 두 대가 같은 리뷰를 보여 준다
 
 ## 바뀌는 구조
 
-지금 글은 서버 디스크의 파일에 저장돼서 서버가 바뀌면 사라집니다(11단원에서 새 서버로 옮길 때 본 그 문제). 저장소를 DynamoDB 테이블로 옮기면 서버가 몇 대든, 바뀌든 같은 글을 봅니다.
+지금 리뷰는 서버 디스크의 파일에 저장돼서 서버가 바뀌면 사라집니다(11단원에서 새 서버로 옮길 때 본 그 문제). 저장소를 DynamoDB 테이블로 옮기면 서버가 몇 대든, 바뀌든 같은 리뷰를 봅니다.
 
 ## 만들 것
 
@@ -83,17 +83,17 @@ sidebar:
       sudo systemctl restart guestbook
       ```
 
-6. 두 번째 서버에서도 4번과 5번을 똑같이 합니다. 한 대만 바꾸면 새로고침할 때마다 `저장소: file` 과 `저장소: dynamodb` 가 번갈아 나오고, 쓴 글이 보였다 안 보였다 합니다.
+6. 두 번째 서버에서도 4번과 5번을 똑같이 합니다. 한 대만 바꾸면 새로고침할 때마다 맨 위 검은 띠에 `저장소: file` 과 `저장소: dynamodb` 가 번갈아 나오고, 쓴 리뷰가 보였다 안 보였다 합니다.
 
 ## 확인
 
-1. 새 탭에 `http://로드 밸런서 DNS 이름` 을 열어 글을 하나 씁니다. 새로고침하며 「서버:」 줄(①)이 바뀌어도 같은 글(②)이 보이는지 봅니다. 두 서버 모두 `저장소: dynamodb` 여야 합니다. <a href="https://ap-northeast-2.console.aws.amazon.com/ec2/home?region=ap-northeast-2#LoadBalancers:" target="_blank" rel="noopener">로드 밸런서 ↗</a>
+1. 새 탭에 `http://로드 밸런서 DNS 이름` 을 열어 리뷰를 하나 씁니다. 새로고침하며 맨 위 띠의 「이 화면을 보낸 서버:」(①)가 바뀌어도 같은 리뷰(②)가 보이는지 봅니다. 두 서버 모두 띠에 `저장소: dynamodb` 가 보여야 합니다. <a href="https://ap-northeast-2.console.aws.amazon.com/ec2/home?region=ap-northeast-2#LoadBalancers:" target="_blank" rel="noopener">로드 밸런서 ↗</a>
 
-   ![서버 ip-10-0-1-28, 저장소 dynamodb 줄과 새로 쓴 글에 번호를 붙여 표시한 방명록 화면](../../../assets/menu2/app-server-a.png)
+   ![맨 위 띠의 서버 ip-10-0-1-28 과 저장소 dynamodb, 새로 쓴 리뷰에 번호를 붙여 표시한 화면](../../../assets/menu2/app-server-a.png)
 
-   ![새로고침해 서버 ip-10-0-2-62 로 바뀐 줄과 같은 글에 번호를 붙여 표시한 방명록 화면](../../../assets/menu2/app-server-b.png)
+   ![새로고침해 띠의 서버가 ip-10-0-2-62 로 바뀌고 같은 리뷰가 보이는 화면에 번호를 붙여 표시한 화면](../../../assets/menu2/app-server-b.png)
 
-2. 테이블 화면 오른쪽 위 「표 항목 탐색」을 누릅니다. 아래 「반환된 항목」 표에 쓴 글이 한 줄씩 쌓여 있는지 봅니다. <a href="https://ap-northeast-2.console.aws.amazon.com/dynamodbv2/home?region=ap-northeast-2#tables" target="_blank" rel="noopener">테이블 목록 ↗</a>
+2. 테이블 화면 오른쪽 위 「표 항목 탐색」을 누릅니다. 아래 「반환된 항목」 표에 쓴 리뷰가 한 줄씩 쌓여 있는지 봅니다. 급식 리뷰 앱이 쓴 줄에는 받은 서버 `host` 와 고른 메뉴 `dish` 칸도 있습니다. <a href="https://ap-northeast-2.console.aws.amazon.com/dynamodbv2/home?region=ap-northeast-2#tables" target="_blank" rel="noopener">테이블 목록 ↗</a>
 
    ![guestbook 테이블 화면 오른쪽 위 표 항목 탐색 단추에 표시한 화면](../../../assets/menu2/ddb-explore-btn.png)
 
@@ -102,9 +102,9 @@ sidebar:
 ## 막히면
 
 - 새로고침마다 저장소가 `file` 과 `dynamodb` 로 바뀝니다: 5번을 한 서버에만 했습니다. 두 번째 서버도 고칩니다.
-- 전에 쓴 글이 사라졌습니다: 정상입니다. 전 글은 서버 디스크 파일에 있고 이제 앱은 테이블을 읽습니다.
+- 전에 쓴 리뷰가 사라졌습니다: 정상입니다. 전 리뷰는 서버 디스크 파일에 있고 이제 앱은 테이블을 읽습니다.
 - 역할 화면의 `access-analyzer:ListPolicyGenerations에 대한 액세스 거부됨` 빨간 상자: 이 메뉴에서 쓰지 않는 「정책 생성」 기능의 권한 오류라 무시해도 됩니다.
-- 페이지가 `500 Internal Server Error`: 서버에서 아래 명령으로 앱 기록을 봅니다. 앱은 실행하며 일어난 일을 일기장처럼 기록해 두고, `journalctl` 은 그 일기장을 보는 명령입니다. 끝부분의 오류 이름으로 원인을 찾습니다. `AccessDeniedException`(권한 없음)이면 정책의 ARN, `ResourceNotFoundException`(그런 테이블이 없음)이면 테이블 이름을 봅니다.
+- 리뷰 자리에 「리뷰 저장소 dynamodb 에 연결하지 못했습니다」가 나오고 띠의 저장소 옆에 노란 점과 「오류」가 보입니다: 화면에 나온 오류 이름을 먼저 봅니다. 자세한 내용은 서버에서 아래 명령으로 앱 기록을 봅니다. 앱은 실행하며 일어난 일을 일기장처럼 기록해 두고, `journalctl` 은 그 일기장을 보는 명령입니다. 끝부분의 오류 이름으로 원인을 찾습니다. `AccessDeniedException`(권한 없음)이면 정책의 ARN, `ResourceNotFoundException`(그런 테이블이 없음)이면 테이블 이름을 봅니다.
 
   ```bash
   # 앱이 남긴 일기장(기록)의 마지막 30줄을 봅니다

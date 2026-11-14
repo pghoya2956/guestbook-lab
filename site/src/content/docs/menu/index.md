@@ -10,9 +10,9 @@ sidebar:
 
 | 메뉴 | 쓰는 서비스 | 완료 기준 |
 |---|---|---|
-| [1. 방명록에 이미지 첨부](/guestbook-lab/menu/1-image/) | S3, IAM 역할 | 이미지가 페이지에 보임 |
-| [2. 저장소를 데이터베이스로](/guestbook-lab/menu/2-dynamodb/) | DynamoDB | 글이 테이블에 쌓임 |
+| [1. 급식 사진 첨부](/guestbook-lab/menu/1-image/) | S3, IAM 역할 | 올린 사진이 식판 칸에 보임 |
+| [2. 저장소를 데이터베이스로](/guestbook-lab/menu/2-dynamodb/) | DynamoDB | 리뷰가 테이블에 쌓임 |
 | [3. 트래픽 두 배 버티기](/guestbook-lab/menu/3-scaling/) | 오토 스케일링 | 부하를 걸면 서버가 늘어남 |
 | [4. 장애 알림 받기](/guestbook-lab/menu/4-alarm/) | CloudWatch 알람 | 오류를 일으키면 알람이 울림 |
-| [5. 저장소를 MySQL 로 (심화)](/guestbook-lab/menu/5-rds/) | RDS, Parameter Store | 글이 DB 에 쌓임 |
+| [5. 저장소를 MySQL 로 (심화)](/guestbook-lab/menu/5-rds/) | RDS, Parameter Store | 리뷰가 DB 에 쌓임 |
 | [6. VPC 를 코드로 (심화)](/guestbook-lab/menu/6-terraform/) | Terraform | apply 로 같은 구조가 생김 |

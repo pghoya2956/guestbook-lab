@@ -1,4 +1,4 @@
-# 서버리스 방명록 API (2학년 11단원). API Gateway HTTP API(페이로드 2.0) + DynamoDB 테이블 guestbook.
+# 서버리스 리뷰 API (2학년 11단원). API Gateway HTTP API(페이로드 2.0) + DynamoDB 테이블 guestbook.
 import json
 import os
 import time
