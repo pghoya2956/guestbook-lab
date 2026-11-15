@@ -1,5 +1,5 @@
 ---
-# 생성물. lms build 가 courses/aws-intro/pages/after.md 에서 만든다. 손으로 고치지 않는다. 원본 해시 ccfffdb2769e
+# 생성물. lms build 가 courses/aws-intro/pages/after.md 에서 만든다. 손으로 고치지 않는다. 원본 해시 b2c6f2f3b59f
 title: 수업이 끝난 뒤
 description: 수업 자료, 내 AWS 계정으로 다시 해 볼 때 달라지는 것, 요금이 나가지 않게 하는 법
 ---
@@ -9,7 +9,8 @@ description: 수업 자료, 내 AWS 계정으로 다시 해 볼 때 달라지는
 ## 수업 자료
 
 - 수업 덱: [1일차 PDF](https://drive.google.com/file/d/18mT7OKfIay_gWoTNWfXyTJnMoBEzgf_J/view), [2일차 PDF](https://drive.google.com/file/d/1hYmqlapyWV8U_y0jR3TyBeqe05IOhC8I/view)
-- 단원 페이지: 왼쪽 목록의 1~15단원. 단원마다 「막혔을 때: 이 단원 전체 흐름 영상」을 펼치면 실습 전체를 영상으로 볼 수 있습니다.
+- 단원 페이지: 왼쪽 목록의 1~15단원. 10단원은 「막혔을 때: 이 단원 전체 흐름 영상」을 펼치면 실습 전체를 영상으로 볼 수 있습니다.
+- 수업 뒤 혼자 해 보기: [7단원 S3 정적 웹사이트](/guestbook-lab/u7/). 수업에서는 하지 않은 단원입니다.
 - 앱 코드: [github.com/pghoya2956/guestbook-lab](https://github.com/pghoya2956/guestbook-lab)
 
 ## 내 계정을 만들기 전에

@@ -1,5 +1,5 @@
 ---
-# 생성물. lms build 가 courses/aws-intro/pages/basics/values.md 에서 만든다. 손으로 고치지 않는다. 원본 해시 9a338c8c44fd
+# 생성물. lms build 가 courses/aws-intro/pages/basics/values.md 에서 만든다. 손으로 고치지 않는다. 원본 해시 395d79ec7c86
 title: 리전과 되는 값
 description: 서울 리전, 수업 계정에서 되는 값, 수업에서 쓰는 이름
 sidebar:
@@ -28,7 +28,7 @@ sidebar:
 | 단원 | 이름 |
 |---|---|
 | [4단원](/guestbook-lab/u4/) | 역할 `guestbook-ec2-role`, 서버 `guestbook-1` |
-| [7단원](/guestbook-lab/u7/) | 버킷 `guestbook-좌석번호-아무숫자` (예: `guestbook-s01-1104`) |
+| [7단원](/guestbook-lab/u7/)(수업 뒤 혼자 해 보기) | 버킷 `guestbook-좌석번호-아무숫자` (예: `guestbook-s01-1104`) |
 | [9단원](/guestbook-lab/u9/) | 공지 버킷 `guestbook-notice-좌석번호-숫자` |
 | [10단원](/guestbook-lab/u10/) | `guestbook-vpc`, 서브넷 `public-a`(2a)와 `public-c`(2c), `guestbook-igw`, `guestbook-public-rt` |
 | [11단원](/guestbook-lab/u11/) | 시작 템플릿 `guestbook-lt`, 보안 그룹 `guestbook-web`, 서버 `guestbook-2` |
