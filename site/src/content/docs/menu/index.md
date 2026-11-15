@@ -1,15 +1,15 @@
 ---
-# 생성물. lms build 가 courses/aws-intro/pages/menu/index.md 에서 만든다. 손으로 고치지 않는다. 원본 해시 651dc6c2543b
-title: 미니 프로젝트 메뉴
-description: 메뉴 여섯 가지, 쓰는 서비스, 완료 기준
+# 생성물. lms build 가 courses/aws-intro/pages/menu/index.md 에서 만든다. 손으로 고치지 않는다. 원본 해시 42245265dc3d
+title: 미니 프로젝트 과제
+description: 과제 여섯 가지, 쓰는 서비스, 완료 기준
 sidebar:
-  label: 메뉴 고르기
+  label: 과제 고르기
   order: 0
 ---
 
-메뉴에서 1~2개를 골라 내 앱에 붙입니다. 심화 두 메뉴는 2학년과 빨리 끝낸 학생용입니다. 막히면 [14단원](/guestbook-lab/u14/)을 봅니다.
+과제 가운데 1~2개를 골라 내 앱에 붙입니다. 심화 두 과제는 2학년과 빨리 끝낸 학생용입니다. 막히면 [14단원](/guestbook-lab/u14/)을 봅니다.
 
-| 메뉴 | 쓰는 서비스 | 완료 기준 |
+| 과제 | 쓰는 서비스 | 완료 기준 |
 |---|---|---|
 | [1. 급식 사진 첨부](/guestbook-lab/menu/1-image/) | S3, IAM 역할 | 올린 사진이 식판 칸에 보임 |
 | [2. 저장소를 데이터베이스로](/guestbook-lab/menu/2-dynamodb/) | DynamoDB | 리뷰가 테이블에 쌓임 |

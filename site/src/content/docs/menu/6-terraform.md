@@ -1,6 +1,6 @@
 ---
-# 생성물. lms build 가 courses/aws-intro/units/u14/menus/terraform.md 에서 만든다. 손으로 고치지 않는다. 원본 해시 3d602506c007
-title: "메뉴 6(심화). VPC 를 코드로 다시 만들기"
+# 생성물. lms build 가 courses/aws-intro/units/u14/menus/terraform.md 에서 만든다. 손으로 고치지 않는다. 원본 해시 e8d24bfe5b24
+title: "과제 6(심화). VPC 를 코드로 다시 만들기"
 sidebar:
   label: "6. Terraform (심화)"
   order: 6

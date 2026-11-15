@@ -1,6 +1,6 @@
 ---
-# 생성물. lms build 가 courses/aws-intro/units/u14/menus/alarm.md 에서 만든다. 손으로 고치지 않는다. 원본 해시 8c72946a1c38
-title: "메뉴 4. 장애 알림 받기"
+# 생성물. lms build 가 courses/aws-intro/units/u14/menus/alarm.md 에서 만든다. 손으로 고치지 않는다. 원본 해시 f7ae04d62dfe
+title: "과제 4. 장애 알림 받기"
 sidebar:
   label: "4. 장애 알림"
   order: 4
@@ -74,7 +74,7 @@ sidebar:
 
 ## 확인
 
-CloudShell 에서 1번 명령을 한 번 더 칩니다. 1~2분 뒤 경보 목록을 새로 고침하면 `guestbook-5xx` 의 상태가 「경보 상태」로 바뀝니다. 오류를 멈추면 몇 분 뒤 「정상」으로 돌아옵니다. <a href="https://ap-northeast-2.console.aws.amazon.com/cloudwatch/home?region=ap-northeast-2#alarmsV2:" target="_blank" rel="noopener">경보 목록 ↗</a>
+CloudShell 에서 1번 명령을 한 번 더 칩니다. 2~3분 뒤 경보 목록을 새로 고침하면 `guestbook-5xx` 의 상태가 「경보 상태」로 바뀝니다. 오류를 멈추면 7분쯤 뒤 「데이터 부족」으로 돌아옵니다. 오류가 하나도 없으면 경보가 셀 숫자가 없어서이고 정상입니다. <a href="https://ap-northeast-2.console.aws.amazon.com/cloudwatch/home?region=ap-northeast-2#alarmsV2:" target="_blank" rel="noopener">경보 목록 ↗</a>
 
 ![경보 목록에서 guestbook-5xx 의 상태가 경보 상태로 바뀐 줄에 표시한 화면](../../../assets/menu4/alarm-state.png)
 

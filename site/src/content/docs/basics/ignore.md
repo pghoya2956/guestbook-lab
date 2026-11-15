@@ -1,5 +1,5 @@
 ---
-# 생성물. lms build 가 courses/aws-intro/pages/basics/ignore.md 에서 만든다. 손으로 고치지 않는다. 원본 해시 fe6fda7edcf3
+# 생성물. lms build 가 courses/aws-intro/pages/basics/ignore.md 에서 만든다. 손으로 고치지 않는다. 원본 해시 021323c9e7aa
 title: 무시해도 되는 화면
 description: 수업과 상관없이 뜨는 말풍선과 안내
 sidebar:
@@ -22,6 +22,10 @@ sidebar:
 
 :::tip[Session Manager 화면의 Chrome 번역 말풍선]{icon="approve-check-circle"}
 닫습니다.
+:::
+
+:::tip[Lambda 코드 편집기의 「See what's new in the code editor」 알림]{icon="approve-check-circle"}
+편집기 새 기능 안내입니다. 닫거나 그대로 두고 코드를 고칩니다([13단원](/guestbook-lab/u13/)).
 :::
 
 :::tip[S3 권한 탭에 뜨는 계정 차단 안내]{icon="approve-check-circle"}

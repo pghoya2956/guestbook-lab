@@ -1,4 +1,4 @@
-// 생성물. lms build 가 courses/aws-intro/course.yaml 에서 만든다. 손으로 고치지 않는다. 원본 해시 c489cbc4b93a
+// 생성물. lms build 가 courses/aws-intro/course.yaml 에서 만든다. 손으로 고치지 않는다. 원본 해시 42b915c6f8f6
 export default [
 	{
 		"label": "처음 오면",
@@ -37,7 +37,7 @@ export default [
 		]
 	},
 	{
-		"label": "미니 프로젝트 메뉴",
+		"label": "미니 프로젝트 과제",
 		"items": [
 			{
 				"autogenerate": {

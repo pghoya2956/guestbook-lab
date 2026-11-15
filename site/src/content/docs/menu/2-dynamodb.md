@@ -1,6 +1,6 @@
 ---
-# 생성물. lms build 가 courses/aws-intro/units/u14/menus/dynamodb.md 에서 만든다. 손으로 고치지 않는다. 원본 해시 b93e747b7f89
-title: "메뉴 2. 저장소를 데이터베이스로"
+# 생성물. lms build 가 courses/aws-intro/units/u14/menus/dynamodb.md 에서 만든다. 손으로 고치지 않는다. 원본 해시 b294fd47dcee
+title: "과제 2. 저장소를 데이터베이스로"
 sidebar:
   label: "2. DynamoDB 저장소"
   order: 2
@@ -29,7 +29,7 @@ sidebar:
 
    ![일반 정보의 Amazon 리소스 이름(ARN)과 복사 아이콘에 표시한 화면](../../../assets/menu2/ddb-arn.png)
 
-3. 서버 역할에 테이블을 읽고 쓸 권한을 붙입니다. 순서는 [메뉴 1](/guestbook-lab/menu/1-image/) 2번과 같습니다. <a href="https://console.aws.amazon.com/iam/home#/roles/details/guestbook-ec2-role?section=permissions" target="_blank" rel="noopener">guestbook-ec2-role 열기 ↗</a>
+3. 서버 역할에 테이블을 읽고 쓸 권한을 붙입니다. 순서는 [과제 1](/guestbook-lab/menu/1-image/) 2번과 같습니다. <a href="https://console.aws.amazon.com/iam/home#/roles/details/guestbook-ec2-role?section=permissions" target="_blank" rel="noopener">guestbook-ec2-role 열기 ↗</a>
    1. `guestbook-ec2-role` 의 「권한 추가」 → 「인라인 정책 생성」을 누릅니다. 인라인 정책은 이 역할에만 붙는 권한 쪽지입니다.
    2. 「JSON」(①)을 누르고(권한을 적는 정해진 글 형식) 편집기 칸(②)의 내용을 모두 지운 뒤 아래를 붙여 넣습니다. `테이블ARN` 자리에 2번에서 복사한 주소를 붙여 넣습니다.
 
@@ -48,9 +48,9 @@ sidebar:
 
    3. 맨 아래 「다음」 → 「정책 이름」에 `guestbook-dynamodb` → 「정책 생성」을 누릅니다.
 
-4. 서버 두 대를 찾아 첫 번째 서버에 접속합니다. 순서는 [메뉴 1](/guestbook-lab/menu/1-image/) 3번과 같습니다(대상 그룹 `guestbook-tg` → 「대상」 탭의 인스턴스 ID 두 개 → 인스턴스 목록에서 한 행만 체크 → 「연결」).
+4. 서버 두 대를 찾아 첫 번째 서버에 접속합니다. 순서는 [과제 1](/guestbook-lab/menu/1-image/) 3번과 같습니다(대상 그룹 `guestbook-tg` → 「대상」 탭의 인스턴스 ID 두 개 → 인스턴스 목록에서 한 행만 체크 → 「연결」).
 
-5. 첫 번째 서버에서 설정 파일을 고칩니다. 설정 파일에는 메뉴마다 쓸 줄이 미리 있습니다. 새 줄을 더하면 같은 이름이 두 줄이 되고 아래쪽 줄 값이 쓰여서 헷갈리니 이미 있는 줄을 고칩니다.
+5. 첫 번째 서버에서 설정 파일을 고칩니다. 설정 파일에는 과제마다 쓸 줄이 미리 있습니다. 새 줄을 더하면 같은 이름이 두 줄이 되고 아래쪽 줄 값이 쓰여서 헷갈리니 이미 있는 줄을 고칩니다.
    1. 설정 파일을 엽니다. `STORAGE=file` 줄이 보입니다.
 
       ```bash
@@ -90,21 +90,21 @@ sidebar:
 
 1. 새 탭에 `http://로드 밸런서 DNS 이름` 을 열어 리뷰를 하나 씁니다. 새로고침하며 맨 위 띠의 「이 화면을 보낸 서버:」(①)가 바뀌어도 같은 리뷰(②)가 보이는지 봅니다. 두 서버 모두 띠에 `저장소: dynamodb` 가 보여야 합니다. <a href="https://ap-northeast-2.console.aws.amazon.com/ec2/home?region=ap-northeast-2#LoadBalancers:" target="_blank" rel="noopener">로드 밸런서 ↗</a>
 
-   ![맨 위 띠의 서버 ip-10-0-1-28 과 저장소 dynamodb, 새로 쓴 리뷰에 번호를 붙여 표시한 화면](../../../assets/menu2/app-server-a.png)
+   ![맨 위 띠의 서버 ip-10-0-1-10 과 저장소 dynamodb 에 번호를 붙이고 리뷰 3개가 보이는 화면](../../../assets/menu2/app-server-a.png)
 
-   ![새로고침해 띠의 서버가 ip-10-0-2-62 로 바뀌고 같은 리뷰가 보이는 화면에 번호를 붙여 표시한 화면](../../../assets/menu2/app-server-b.png)
+   ![새로고침해 띠의 서버가 ip-10-0-2-162 로 바뀌고 같은 리뷰 3개가 보이는 화면에 번호를 붙여 표시한 화면](../../../assets/menu2/app-server-b.png)
 
-2. 테이블 화면 오른쪽 위 「표 항목 탐색」을 누릅니다. 아래 「반환된 항목」 표에 쓴 리뷰가 한 줄씩 쌓여 있는지 봅니다. 급식 리뷰 앱이 쓴 줄에는 받은 서버 `host` 와 고른 메뉴 `dish` 칸도 있습니다. <a href="https://ap-northeast-2.console.aws.amazon.com/dynamodbv2/home?region=ap-northeast-2#tables" target="_blank" rel="noopener">테이블 목록 ↗</a>
+2. 테이블 화면 오른쪽 위 「표 항목 탐색」을 누릅니다. 아래 「반환된 항목」 표에 쓴 리뷰가 한 줄씩 쌓여 있는지 봅니다. 급식 리뷰 앱이 쓴 줄에는 받은 서버 `host`, 고른 메뉴 `dish`, 리뷰를 쓴 때의 메뉴 원문 `menu` 칸도 있습니다. `menu` 는 지난 날 화면의 식판을 그릴 때 씁니다. 표의 칸은 `id, dish, host, image_key, menu` 순으로 보이고 값이 없는 칸은 `<empty>` 로 보입니다. <a href="https://ap-northeast-2.console.aws.amazon.com/dynamodbv2/home?region=ap-northeast-2#tables" target="_blank" rel="noopener">테이블 목록 ↗</a>
 
    ![guestbook 테이블 화면 오른쪽 위 표 항목 탐색 단추에 표시한 화면](../../../assets/menu2/ddb-explore-btn.png)
 
-   ![반환된 항목 표에 id, image_key, msg, name, ts 가 들어간 글 한 줄에 표시한 화면](../../../assets/menu2/ddb-items.png)
+   ![반환된 항목 표에 id, dish, host, image_key, menu 칸과 리뷰 세 줄이 보이는 화면](../../../assets/menu2/ddb-items.png)
 
 ## 막히면
 
 - 새로고침마다 저장소가 `file` 과 `dynamodb` 로 바뀝니다: 5번을 한 서버에만 했습니다. 두 번째 서버도 고칩니다.
-- 전에 쓴 리뷰가 사라졌습니다: 정상입니다. 전 리뷰는 서버 디스크 파일에 있고 이제 앱은 테이블을 읽습니다.
-- 역할 화면의 `access-analyzer:ListPolicyGenerations에 대한 액세스 거부됨` 빨간 상자: 이 메뉴에서 쓰지 않는 「정책 생성」 기능의 권한 오류라 무시해도 됩니다.
+- 전에 쓴 리뷰가 사라졌습니다: 정상입니다. 전 리뷰는 서버 디스크 파일에 있고 이제 앱은 테이블을 읽습니다. 그래서 리뷰 목록, 사진 줄, 식판 칸 사진, 칸별 리뷰 수, 「리뷰 가장 많음」도 처음으로 돌아갑니다. 올린 사진 파일은 S3 사진 버킷에 그대로 남아 있습니다.
+- 역할 화면의 `access-analyzer:ListPolicyGenerations에 대한 액세스 거부됨` 빨간 상자: 이 과제에서 쓰지 않는 「정책 생성」 기능의 권한 오류라 무시해도 됩니다.
 - 리뷰 자리에 「리뷰 저장소 dynamodb 에 연결하지 못했습니다」가 나오고 띠의 저장소 옆에 노란 점과 「오류」가 보입니다: 화면에 나온 오류 이름을 먼저 봅니다. 자세한 내용은 서버에서 아래 명령으로 앱 기록을 봅니다. 앱은 실행하며 일어난 일을 일기장처럼 기록해 두고, `journalctl` 은 그 일기장을 보는 명령입니다. 끝부분의 오류 이름으로 원인을 찾습니다. `AccessDeniedException`(권한 없음)이면 정책의 ARN, `ResourceNotFoundException`(그런 테이블이 없음)이면 테이블 이름을 봅니다.
 
   ```bash

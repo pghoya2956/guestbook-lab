@@ -1,6 +1,6 @@
 ---
-# 생성물. lms build 가 courses/aws-intro/units/u14/menus/rds.md 에서 만든다. 손으로 고치지 않는다. 원본 해시 2d0568a595b3
-title: "메뉴 5(심화). 저장소를 MySQL 데이터베이스로"
+# 생성물. lms build 가 courses/aws-intro/units/u14/menus/rds.md 에서 만든다. 손으로 고치지 않는다. 원본 해시 6c3f07dc697d
+title: "과제 5(심화). 저장소를 MySQL 데이터베이스로"
 sidebar:
   label: "5. MySQL (심화)"
   order: 5
@@ -89,7 +89,7 @@ sidebar:
 
       ![내 파라미터 목록의 /guestbook/db/host String 과 /guestbook/db/password SecureString 두 줄에 표시한 화면](../../../assets/menu5/ps-list.png)
 
-5. 서버 역할에 파라미터를 읽을 권한을 붙입니다. 순서는 [메뉴 1](/guestbook-lab/menu/1-image/) 2번과 같습니다(`guestbook-ec2-role` → 「권한 추가」 → 「인라인 정책 생성」 → 「JSON」). 인라인 정책은 이 역할에만 붙는 권한 쪽지, JSON 은 권한을 적는 정해진 글 형식, `Resource` 줄의 ARN 은 AWS 자원의 전체 주소입니다. 아래를 그대로 붙여 넣고 정책 이름은 `guestbook-ssm-db` 로 합니다. 계정 번호 자리의 `*` 는 「내 계정」이라는 뜻으로 그대로 둡니다. <a href="https://console.aws.amazon.com/iam/home#/roles/details/guestbook-ec2-role?section=permissions" target="_blank" rel="noopener">guestbook-ec2-role 열기 ↗</a>
+5. 서버 역할에 파라미터를 읽을 권한을 붙입니다. 순서는 [과제 1](/guestbook-lab/menu/1-image/) 2번과 같습니다(`guestbook-ec2-role` → 「권한 추가」 → 「인라인 정책 생성」 → 「JSON」). 인라인 정책은 이 역할에만 붙는 권한 쪽지, JSON 은 권한을 적는 정해진 글 형식, `Resource` 줄의 ARN 은 AWS 자원의 전체 주소입니다. 아래를 그대로 붙여 넣고 정책 이름은 `guestbook-ssm-db` 로 합니다. 계정 번호 자리의 `*` 는 「내 계정」이라는 뜻으로 그대로 둡니다. <a href="https://console.aws.amazon.com/iam/home#/roles/details/guestbook-ec2-role?section=permissions" target="_blank" rel="noopener">guestbook-ec2-role 열기 ↗</a>
 
    ```json
    {
@@ -104,9 +104,9 @@ sidebar:
 
    ![정책 편집기의 JSON 단추와 ssm:GetParameter 정책을 붙여 넣은 칸에 번호를 붙여 표시한 화면](../../../assets/menu5/policy-json.png)
 
-6. 서버 한 대에 접속합니다. 순서는 [메뉴 1](/guestbook-lab/menu/1-image/) 3번과 같습니다(대상 그룹 `guestbook-tg` → 「대상」 탭의 인스턴스 ID → 인스턴스 목록에서 한 행만 체크 → 「연결」).
+6. 서버 한 대에 접속합니다. 순서는 [과제 1](/guestbook-lab/menu/1-image/) 3번과 같습니다(대상 그룹 `guestbook-tg` → 「대상」 탭의 인스턴스 ID → 인스턴스 목록에서 한 행만 체크 → 「연결」).
 
-7. 그 서버에서 설정 파일을 고칩니다. 설정 파일에는 메뉴마다 쓸 줄이 미리 있습니다. 새 줄을 더하면 같은 이름이 두 줄이 되고 아래쪽 줄 값이 쓰여서 헷갈리니 이미 있는 `STORAGE=` 줄을 고칩니다.
+7. 그 서버에서 설정 파일을 고칩니다. 설정 파일에는 과제마다 쓸 줄이 미리 있습니다. 새 줄을 더하면 같은 이름이 두 줄이 되고 아래쪽 줄 값이 쓰여서 헷갈리니 이미 있는 `STORAGE=` 줄을 고칩니다.
    1. 설정 파일을 엽니다.
 
       ```bash
@@ -148,6 +148,7 @@ sidebar:
 
 ## 막히면
 
+- 전에 쓴 리뷰와 식판 칸 사진, 칸별 리뷰 수가 처음으로 돌아갔습니다: 정상입니다. 앱이 이제 MySQL 을 읽고, 전 리뷰는 서버 디스크 파일이나 DynamoDB 에 남아 있습니다. 올린 사진 파일은 S3 사진 버킷에 그대로 있습니다. 앱이 처음 켜질 때 표에 `host`, `dish`, `menu` 칸을 스스로 더합니다.
 - 페이지가 열리지 않거나, 리뷰 자리에 「리뷰 저장소 mysql 에 연결하지 못했습니다」가 나옵니다: 서버에서 아래 명령으로 앱 기록을 봅니다. 앱은 실행하며 일어난 일을 일기장처럼 기록해 두고, `journalctl` 은 그 일기장을 보는 명령입니다. 끝부분의 오류 이름으로 원인을 찾습니다.
 
   ```bash
@@ -175,7 +176,7 @@ sidebar:
 
 DB 는 켜져 있는 동안 시간당 요금이 붙습니다. 확인이 끝나면 바로 지웁니다. <a href="https://ap-northeast-2.console.aws.amazon.com/rds/home?region=ap-northeast-2#databases:" target="_blank" rel="noopener">DB 목록 ↗</a>
 
-1. 고친 서버의 설정 파일을 7번 순서로 열어 `STORAGE=` 값을 원래 값(`file` 또는 메뉴 2 를 했다면 `dynamodb`)으로 되돌리고 앱을 다시 켭니다. DB 를 지운 뒤에도 `mysql` 로 두면 앱이 멈춥니다.
+1. 고친 서버의 설정 파일을 7번 순서로 열어 `STORAGE=` 값을 원래 값(`file` 또는 과제 2 를 했다면 `dynamodb`)으로 되돌리고 앱을 다시 켭니다. DB 를 지운 뒤에도 `mysql` 로 두면 앱이 멈춥니다.
 2. DB 목록에서 `guestbook-db` 를 고르고(①) 「작업」(②) → 「삭제」(③)를 누릅니다.
 
    ![DB 목록에서 guestbook-db 선택, 작업 메뉴, 삭제에 번호를 붙여 표시한 화면](../../../assets/menu5/rds-delete-menu.png)
