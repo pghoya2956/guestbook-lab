@@ -1,4 +1,5 @@
 ---
+# 생성물. lms build 가 courses/aws-intro/pages/basics/values.md 에서 만든다. 손으로 고치지 않는다. 원본 해시 9a338c8c44fd
 title: 리전과 되는 값
 description: 서울 리전, 수업 계정에서 되는 값, 수업에서 쓰는 이름
 sidebar:

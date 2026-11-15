@@ -1,4 +1,5 @@
 ---
+# 생성물. lms build 가 courses/aws-intro/pages/menu/index.md 에서 만든다. 손으로 고치지 않는다. 원본 해시 651dc6c2543b
 title: 미니 프로젝트 메뉴
 description: 메뉴 여섯 가지, 쓰는 서비스, 완료 기준
 sidebar:

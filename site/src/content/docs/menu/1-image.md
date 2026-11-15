@@ -1,4 +1,5 @@
 ---
+# 생성물. lms build 가 courses/aws-intro/units/u14/menus/image.md 에서 만든다. 손으로 고치지 않는다. 원본 해시 e3f623d4f2cf
 title: "메뉴 1. 급식 사진 첨부"
 sidebar:
   label: "1. 급식 사진 첨부"

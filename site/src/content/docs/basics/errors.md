@@ -1,4 +1,5 @@
 ---
+# 생성물. lms build 가 courses/aws-intro/pages/basics/errors.md 에서 만든다. 손으로 고치지 않는다. 원본 해시 ef237878b436
 title: 오류 읽는 법
 description: 권한 오류 문구 구분하기, http 주소가 안 열릴 때
 sidebar:

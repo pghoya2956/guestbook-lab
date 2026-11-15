@@ -1,4 +1,5 @@
 ---
+# 생성물. lms build 가 courses/aws-intro/pages/after.md 에서 만든다. 손으로 고치지 않는다. 원본 해시 ccfffdb2769e
 title: 수업이 끝난 뒤
 description: 수업 자료, 내 AWS 계정으로 다시 해 볼 때 달라지는 것, 요금이 나가지 않게 하는 법
 ---

@@ -1,4 +1,5 @@
 ---
+# 생성물. lms build 가 courses/aws-intro/pages/basics/ignore.md 에서 만든다. 손으로 고치지 않는다. 원본 해시 fe6fda7edcf3
 title: 무시해도 되는 화면
 description: 수업과 상관없이 뜨는 말풍선과 안내
 sidebar:

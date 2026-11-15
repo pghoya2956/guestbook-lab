@@ -1,4 +1,5 @@
 ---
+# 생성물. lms build 가 courses/aws-intro/units/u14/menus/scaling.md 에서 만든다. 손으로 고치지 않는다. 원본 해시 e5b67fc1d9f7
 title: "메뉴 3. 트래픽 두 배 버티기"
 sidebar:
   label: "3. 트래픽 두 배"

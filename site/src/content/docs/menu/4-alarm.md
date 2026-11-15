@@ -1,4 +1,5 @@
 ---
+# 생성물. lms build 가 courses/aws-intro/units/u14/menus/alarm.md 에서 만든다. 손으로 고치지 않는다. 원본 해시 8c72946a1c38
 title: "메뉴 4. 장애 알림 받기"
 sidebar:
   label: "4. 장애 알림"

@@ -1,4 +1,5 @@
 ---
+# 생성물. lms build 가 courses/aws-intro/units/u14/menus/rds.md 에서 만든다. 손으로 고치지 않는다. 원본 해시 2d0568a595b3
 title: "메뉴 5(심화). 저장소를 MySQL 데이터베이스로"
 sidebar:
   label: "5. MySQL (심화)"
