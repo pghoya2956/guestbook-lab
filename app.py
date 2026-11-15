@@ -248,8 +248,8 @@ def fill_tray(menu, reviews, day):
         d["photo"] = image_url(p["image_key"]) if p else ""
         d["photo_by"] = p["name"] if p else ""
     # 리뷰가 가장 많은 식판 칸이 하나일 때만 강조한다. 같은 수로 겨루면 모든 칸에 붙어 뜻이 없어진다.
-    # 후식은 식판 칸이 없어(아래 글줄) 겨루지 않는다
-    slots = [d for d in [*menu["sides"], menu["rice"], menu["soup"]] if d]
+    # 후식도 식판 칸이다(아래 줄 밥, 국, 후식)
+    slots = dishes
     top = max((d["reviews"] for d in slots), default=0)
     unique = sum(d["reviews"] == top for d in slots) == 1
     for d in dishes:

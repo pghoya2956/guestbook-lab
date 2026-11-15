@@ -85,7 +85,7 @@ h1, h2 { margin: 0; }
 
 /* 식판: 위 반찬 세 칸, 아래 밥 칸과 둥근 국 칸 */
 .tray { background: var(--steel); border-radius: 22px; padding: 14px; box-shadow: inset 0 2px 0 rgba(255,255,255,0.7), 0 10px 24px -14px rgba(18,22,27,0.45); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-.tray-bottom { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.tray-bottom { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
 .slot { position: relative; background: var(--steel-light); border-radius: 12px; box-shadow: inset 0 3px 6px rgba(18,22,27,0.14); padding: 14px 14px 12px; min-height: 120px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .tray-bottom .slot { min-height: 104px; padding: 16px; }
 .tray-bottom .slot-soup { border-radius: 52px; padding: 16px 28px; }
@@ -212,13 +212,14 @@ h1, h2 { margin: 0; }
   .menu { flex-basis: 100%; gap: 10px; }
   .menu-head h1 { font-size: 20px; }
   .tray { border-radius: 18px; padding: 10px; gap: 8px; box-shadow: inset 0 2px 0 rgba(255,255,255,0.7), 0 8px 18px -12px rgba(18,22,27,0.45); }
-  .tray-bottom { gap: 8px; }
+  /* 아래 줄 밥, 국, 후식: 둥근 국 칸이 이름(소고기미역국)을 한 줄에 담게 가운데를 넓힌다 */
+  .tray-bottom { gap: 8px; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr) minmax(0, 1fr); }
   .slot, .tray-bottom .slot { min-height: 74px; padding: 10px; gap: 3px; border-radius: 10px; box-shadow: inset 0 2px 5px rgba(18,22,27,0.14); }
-  .tray-bottom .slot { min-height: 62px; padding: 10px 12px; }
-  .tray-bottom .slot-soup { border-radius: 40px; padding: 10px 18px; }
+  .tray-bottom .slot { min-height: 62px; padding: 10px 8px; }
+  .tray-bottom .slot-soup { border-radius: 40px; padding: 10px 14px; }
   .tray-empty .slot, .tray-empty .tray-bottom .slot { min-height: 56px; }
   .slot .allergy { display: none; }
-  .badge { font-size: 10px; padding: 1px 6px; }
+  .badge { font-size: 10px; padding: 1px 5px; white-space: nowrap; letter-spacing: -0.3px; }
   .dish { font-size: 15px; }
   .count { font-size: 11px; color: var(--body2); }
 

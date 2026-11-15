@@ -76,7 +76,7 @@
         {% endfor %}
         {% for _ in range(menu.empty_sides) %}<div class="slot slot-empty"><span class="slot-hint">반찬 칸</span></div>{% endfor %}
         <div class="tray-bottom">
-          {% for d, kind, hint in [(menu.rice, '', '밥 칸'), (menu.soup, ' slot-soup', '국 칸')] %}
+          {% for d, kind, hint in [(menu.rice, '', '밥 칸'), (menu.soup, ' slot-soup', '국 칸'), (menu.dessert, '', '후식 칸')] %}
           {% if d %}
           <div class="slot{{ kind }}{{ ' slot-top' if d.top }}{{ ' slot-photo' if d.photo }}">
             {% if d.photo %}<img class="slot-img" src="{{ d.photo }}" alt="{{ d.photo_by }} 님이 올린 {{ d.name }} 사진">{% endif %}
@@ -92,14 +92,13 @@
         </div>
       </div>
       <div class="menu-foot">
-        {% if menu.dessert %}<span>후식 <strong>{{ menu.dessert.name }}</strong>{% if menu.dessert.reviews %}, 리뷰 {{ menu.dessert.reviews }}{% endif %}</span>{% endif %}
         {% if day %}<span>그날 마지막 리뷰를 쓸 때의 <span class="mono ink">notice.txt</span> 메뉴입니다</span> <a href="/">오늘로 돌아가기</a>
         {% else %}<span>메뉴는 S3 의 <span class="mono ink">notice.txt</span> 에서 {{ read_at }} 에 읽었습니다</span>{% endif %}
       </div>
       {% if menu.notes and not day %}<div class="notice"><span class="notice-tag">공지</span><p>{{ menu.notes|join('\n') }}</p></div>{% endif %}
 
       {% elif day %}
-      <div class="tray tray-empty" aria-hidden="true">{% for _ in range(3) %}<div class="slot slot-empty"></div>{% endfor %}<div class="tray-bottom"><div class="slot slot-empty"></div><div class="slot slot-soup slot-empty"></div></div></div>
+      <div class="tray tray-empty" aria-hidden="true">{% for _ in range(3) %}<div class="slot slot-empty"></div>{% endfor %}<div class="tray-bottom"><div class="slot slot-empty"></div><div class="slot slot-soup slot-empty"></div><div class="slot slot-empty"></div></div></div>
       <p class="tray-note">이날 메뉴 기록이 없습니다. <a href="/">오늘로 돌아가기</a></p>
 
       {% else %}
@@ -108,7 +107,7 @@
       {% elif notice_state == 'error' %}
       <div class="notice notice-error" role="alert"><span class="notice-tag">메뉴 오류</span><p>{{ notice }}<br><span class="sub">서버 역할이 공지 버킷의 notice.txt 를 읽을 수 있는지, NOTICE_BUCKET 에 적은 버킷 이름이 맞는지 봅니다.</span></p></div>
       {% endif %}
-      <div class="tray tray-empty" aria-hidden="true">{% for _ in range(3) %}<div class="slot slot-empty"></div>{% endfor %}<div class="tray-bottom"><div class="slot slot-empty"></div><div class="slot slot-soup slot-empty"></div></div></div>
+      <div class="tray tray-empty" aria-hidden="true">{% for _ in range(3) %}<div class="slot slot-empty"></div>{% endfor %}<div class="tray-bottom"><div class="slot slot-empty"></div><div class="slot slot-soup slot-empty"></div><div class="slot slot-empty"></div></div></div>
       <p class="tray-note">
         {% if notice_state == 'missing' %}아직 오늘 메뉴가 없습니다. S3 버킷에 notice.txt 를 올리고 config.env 의 NOTICE_BUCKET 에 버킷 이름을 적으면 식판이 채워집니다.
         {% elif notice_state == 'ok' %}notice.txt 를 <span class="mono ink">밥|현미밥|</span> 처럼 「칸|음식|알레르기」 줄로 적으면 식판 칸이 채워집니다.

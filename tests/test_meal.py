@@ -370,13 +370,16 @@ def test_tied_counts_mark_no_top_slot(monkeypatch, tmp_path):
 
 
 @mock_aws
-def test_dessert_does_not_take_the_tray_badge(monkeypatch, tmp_path):
-    """후식은 식판 칸이 없다. 후식 리뷰가 가장 많아도 식판 칸 가운데 가장 많은 칸에 강조가 붙는다."""
+def test_dessert_is_a_tray_slot(monkeypatch, tmp_path):
+    """후식도 식판 칸이다(아래 줄 밥, 국, 후식). 후식 리뷰가 가장 많으면 후식 칸에 강조가 붙는다."""
     _notice_bucket(MENU)
     app = _load(monkeypatch, tmp_path, NOTICE_BUCKET="notice-test")
     c = app.app.test_client()
     for dish in ("귤", "귤", "귤", "닭갈비"):
         c.post("/entries", data={"name": "a", "msg": "b", "dish": dish})
     body = c.get("/").get_data(as_text=True)
-    assert body.count("리뷰 가장 많음") == 1 and body.count("slot-top") == 1
-    assert body.index("닭갈비", body.index("리뷰 가장 많음")) < body.index("콩나물무침")
+    tray = body.split('class="tray"')[1].split('class="menu-foot"')[0]
+    assert tray.count("리뷰 가장 많음") == 1 and tray.count("slot-top") == 1
+    top = tray.index("리뷰 가장 많음")
+    assert tray.index("귤", top) < tray.index("리뷰 <strong>3</strong>", top)
+    assert "후식 <strong>귤</strong>" not in body  # 아래 글줄이 아니라 칸이다

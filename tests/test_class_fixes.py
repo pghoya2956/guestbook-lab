@@ -302,3 +302,29 @@ def test_mysql_added_column_race_is_ignored(monkeypatch, tmp_path):
     monkeypatch.setattr(storage, "_ssm_param", lambda *a, **k: "x")
     monkeypatch.setattr(pymysql, "connect", lambda **k: Conn())
     storage.MySQLStore()  # 예외 없이 켜진다
+
+
+@mock_aws
+def test_dessert_slot_takes_photo_review(monkeypatch, tmp_path):
+    """견본 귤 사진을 「어떤 메뉴: 귤」로 올리면 후식 칸이 그 사진으로 바뀐다(과제 1 판정은 식판 칸의 slot-photo 를 본다)."""
+    _bucket("notice-test", MENU)
+    app = _load(monkeypatch, tmp_path, NOTICE_BUCKET="notice-test", IMAGE_BUCKET="img-test")
+    monkeypatch.setattr(app, "image_url", lambda k: f"https://img.example/{k}" if k else "")
+    today = app.today_kst()
+    (tmp_path / "entries.json").write_text(json.dumps([
+        _review(today, "a", "귤 달아요", "귤", "images/gyul.jpg", menu=MENU)], ensure_ascii=False), encoding="utf-8")
+    tray = _tray(app.app.test_client().get("/").get_data(as_text=True))
+    slot = tray.split('class="slot-img"')[1][:300]
+    assert "images/gyul.jpg" in slot and "귤 사진" in slot
+    assert tray.count("slot-photo") == 1
+
+
+@mock_aws
+def test_bottom_row_has_three_slots_even_without_dessert(monkeypatch, tmp_path):
+    """아래 줄은 언제나 밥, 국, 후식 세 칸이다. 후식이 없는 메뉴는 빈 「후식 칸」, 반찬이 셋보다 많아도 아래 줄은 그대로."""
+    _bucket("notice-test", "밥|흰밥|\n국|된장국|\n" + "\n".join(f"반찬|반찬{i}|" for i in range(5)))
+    app = _load(monkeypatch, tmp_path, NOTICE_BUCKET="notice-test")
+    tray = _tray(app.app.test_client().get("/").get_data(as_text=True))
+    bottom = tray.split('class="tray-bottom"')[1]
+    assert bottom.count('<div class="slot') == 3 and "후식 칸" in bottom and "흰밥" in bottom and "된장국" in bottom
+    assert tray.split('class="tray-bottom"')[0].count("slot-empty") == 1  # 반찬 다섯은 세 칸씩 두 줄, 빈 칸 하나
