@@ -221,19 +221,30 @@ def _parse_day(s):
     return d if d < today_kst() else None
 
 
-def _menu_view(notice_state, notice_text, reviews):
-    """오늘 메뉴 영역에 쓸 값. 칸마다 오늘 쓴 리뷰 수를 세고 가장 많은 칸을 표시한다."""
-    menu = parse_menu(notice_text) if notice_state == "ok" else None
-    if not menu:
-        return None, []
+def reviews_on(reviews, d):
+    """그날(KST) 쓴 리뷰만."""
+    return [r for r in reviews if datetime.fromtimestamp(r["ts"], KST).date() == d]
+
+
+def menu_from_reviews(day_reviews):
+    """메뉴 기록이 없는 날: 그날 리뷰에 적힌 메뉴 이름으로 칸을 만든다. 알레르기는 모르니 None."""
+    names = list(dict.fromkeys(r["dish"] for r in reversed(day_reviews) if r["dish"]))  # 먼저 나온 순서
+    if not names:
+        return None
+    return {"rice": None, "soup": None, "sides": [{"name": n, "allergy": None} for n in names],
+            "dessert": None, "kcal": "", "notes": []}
+
+
+def fill_tray(menu, day_reviews):
+    """식판 칸마다 그날 리뷰 수와 그날 가장 최근 사진을 붙이고, 가장 많은 칸을 표시한다.
+    오늘 식판과 지난 날 식판이 같은 규칙을 쓴다(김치처럼 매일 나오는 반찬이 다른 날 리뷰로 쌓이지 않게)."""
     counts, photos = {}, {}
-    today = today_kst()
-    for r in reviews:  # reviews 는 최신 글이 앞이다
-        # 김치처럼 매일 나오는 반찬이 지난 리뷰로 쌓이지 않게 오늘 리뷰만 센다
-        if r["dish"] and datetime.fromtimestamp(r["ts"], KST).date() == today:
-            counts[r["dish"]] = counts.get(r["dish"], 0) + 1
-        # 칸 사진은 그 메뉴를 고른 사진 리뷰 가운데 가장 최근 것이다. 없으면 칸은 글자만 보인다
-        if r["dish"] and r["image_key"] and r["dish"] not in photos:
+    for r in day_reviews:  # 최신 글이 앞이다
+        if not r["dish"]:
+            continue
+        counts[r["dish"]] = counts.get(r["dish"], 0) + 1
+        # 칸 사진은 그날 그 메뉴를 고른 사진 리뷰 가운데 가장 최근 것이다. 없으면 칸은 글자만 보인다
+        if r["image_key"] and r["dish"] not in photos:
             photos[r["dish"]] = r
     dishes = [d for d in [*menu["sides"], menu["rice"], menu["soup"], menu["dessert"]] if d]
     for d in dishes:
@@ -250,7 +261,38 @@ def _menu_view(notice_state, notice_text, reviews):
         d["top"] = top > 0 and unique and any(d is s for s in slots) and d["reviews"] == top
     # 반찬 칸은 세 칸씩 한 줄이다. 모자라는 칸은 빈 칸으로 채워 식판 모양을 지킨다
     menu["empty_sides"] = max(3 - len(menu["sides"]), -len(menu["sides"]) % 3)
-    return menu, [d["name"] for d in dishes]
+    return menu
+
+
+def dish_names_of(menu):
+    return [d["name"] for d in [*menu["sides"], menu["rice"], menu["soup"], menu["dessert"]] if d] if menu else []
+
+
+MENU_RECHECK_SECONDS = 60
+_remembered = {}
+
+
+def remember_menu(day_iso, text):
+    """오늘 메뉴를 리뷰와 같은 저장소에 남긴다. 저장소와 다를 때만 쓴다.
+    같은 메뉴는 이 서버가 1분에 한 번만 저장소와 맞춰 본다. 다른 서버가 잠깐 잘못 올라온 메뉴를 써도
+    1분 안에 바로잡히고, 남기지 못해도(권한, 연결 오류) 요청마다 다시 하지 않는다. 화면은 그대로 보인다."""
+    now = time.time()
+    if _remembered.get("menu") == (day_iso, text) and now - _remembered.get("at", 0) < MENU_RECHECK_SECONDS:
+        return
+    _remembered.update(menu=(day_iso, text), at=now)
+    try:
+        if store.get_menu(day_iso) != text:
+            store.save_menu(day_iso, text)
+    except Exception:
+        app.logger.exception("오늘 메뉴를 저장소에 남기지 못했습니다")
+
+
+def saved_menu(day_iso):
+    try:
+        return store.get_menu(day_iso)
+    except Exception:
+        app.logger.exception("지난 날 메뉴를 저장소에서 읽지 못했습니다")
+        return None
 
 
 @app.get("/")
@@ -270,11 +312,27 @@ def index():
         reviews = []
 
     notice_state, notice_text = read_notice_status()
-    menu, dish_names = _menu_view(notice_state, notice_text, reviews)
+    today_menu = parse_menu(notice_text) if notice_state == "ok" else None
+    if today_menu:
+        remember_menu(today.isoformat(), notice_text)
+    dish_names = dish_names_of(today_menu)  # 리뷰는 언제나 오늘 쓰니 고를 메뉴도 오늘 것
     hello, hello_source, hello_ms = hello_info()
 
     if day:
-        reviews = [r for r in reviews if datetime.fromtimestamp(r["ts"], KST).date() == day]
+        # 지난 날: 저장소에 남긴 그날 메뉴, 없으면 그날 리뷰에 적힌 메뉴 이름
+        reviews = reviews_on(reviews, day)
+        text = saved_menu(day.isoformat())
+        menu = parse_menu(text) if text else None
+        menu_source = "saved" if menu else ""
+        if not menu:
+            menu = menu_from_reviews(reviews)
+            menu_source = "reviews" if menu else ""
+        if menu:
+            fill_tray(menu, reviews)
+    else:
+        menu, menu_source = today_menu, "notice"
+        if menu:
+            fill_tray(menu, reviews_on(reviews, today))
     reviews = reviews[:50]
     for r in reviews:
         r["image_url"] = image_url(r["image_key"])
@@ -299,6 +357,7 @@ def index():
         notice_state=notice_state,
         notice=notice_text,
         menu=menu,
+        menu_source=menu_source,
         dish_names=dish_names,
         read_at=datetime.now(KST).strftime("%H:%M"),
         hello=hello,

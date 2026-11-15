@@ -5,6 +5,9 @@
   host(글을 받은 서버 이름), dish(어떤 메뉴에 대한 리뷰인지)
 host 와 dish 는 급식 리뷰 앱에서 더한 필드다. 그 전에 쓴 글이나 서버리스 API(lambda/api)가 쓴 글에는
 없을 수 있어서, 읽을 때 normalize 가 빈 값으로 채운다.
+
+지난 날 메뉴도 같은 저장소에 남긴다. save_menu(날짜, notice.txt 원문), get_menu(날짜) -> 원문 또는 None.
+  file: DATA_FILE 옆 menus.json, mysql: menus 표, dynamodb: 같은 테이블의 id 가 「menu#날짜」인 항목.
 """
 import json
 import os
@@ -47,7 +50,25 @@ class FileStore:
 
     def __init__(self, path):
         self.path = Path(path)
+        self.menu_path = self.path.with_name("menus.json")
         self.lock = threading.Lock()
+
+    def _menus(self):
+        if not self.menu_path.exists():
+            return {}
+        return json.loads(self.menu_path.read_text(encoding="utf-8"))
+
+    def get_menu(self, day):
+        with self.lock:
+            m = self._menus().get(day)
+        return m["notice"] if m else None
+
+    def save_menu(self, day, notice):
+        with self.lock:
+            menus = self._menus()
+            menus[day] = {"notice": notice, "saved_at": int(time.time())}
+            self.menu_path.parent.mkdir(parents=True, exist_ok=True)
+            self.menu_path.write_text(json.dumps(menus, ensure_ascii=False), encoding="utf-8")
 
     def _read(self):
         if not self.path.exists():
@@ -107,6 +128,11 @@ class MySQLStore:
             for col, kind in self.ADDED_COLUMNS.items():
                 if col not in have:
                     cur.execute(f"ALTER TABLE entries ADD COLUMN {col} {kind}")
+            # 지난 날 메뉴. 방명록 때 만든 DB 에는 없으니 켜질 때 만든다
+            cur.execute(
+                "CREATE TABLE IF NOT EXISTS menus ("
+                " day CHAR(10) PRIMARY KEY, notice TEXT, saved_at BIGINT)"
+            )
             c.commit()
 
     def _conn(self):
@@ -127,9 +153,37 @@ class MySQLStore:
             )
             c.commit()
 
+    def get_menu(self, day):
+        with self._conn() as c, c.cursor() as cur:
+            cur.execute("SELECT notice FROM menus WHERE day = %s", (day,))
+            row = cur.fetchone()
+        return row["notice"] if row else None
+
+    def save_menu(self, day, notice):
+        with self._conn() as c, c.cursor() as cur:
+            cur.execute(
+                "INSERT INTO menus (day, notice, saved_at) VALUES (%s, %s, %s)"
+                " ON DUPLICATE KEY UPDATE notice = VALUES(notice), saved_at = VALUES(saved_at)",
+                (day, notice, int(time.time())),
+            )
+            c.commit()
+
+
+MENU_PREFIX = "menu#"
+
+
+def is_menu_item(item):
+    """DynamoDB 테이블에서 메뉴 기록 항목인지. 리뷰 목록과 개수에 넣지 않는다."""
+    return str(item.get("id", "")).startswith(MENU_PREFIX)
+
 
 class DynamoStore:
-    """DynamoDB 테이블(파티션 키 id). 미니 프로젝트 메뉴와 2학년 11단원."""
+    """DynamoDB 테이블(파티션 키 id). 미니 프로젝트 메뉴와 2학년 11단원.
+
+    지난 날 메뉴는 테이블을 새로 만들지 않고 같은 테이블에 id 「menu#날짜」로 넣는다(런북 메뉴 2 의 테이블과 정책 그대로).
+    콘솔 「표 항목 탐색」에는 이 메뉴 항목도 하루 한 줄씩 보인다.
+    런북 정책이 Scan 과 PutItem 만 주므로 메뉴도 Scan 으로 찾는다(GetItem 을 쓰지 않는다).
+    """
 
     name = "dynamodb"
 
@@ -142,10 +196,26 @@ class DynamoStore:
 
     def list(self, limit=50):
         items = self.table.scan(Limit=200).get("Items", [])
-        return _newest(items, limit)
+        return _newest([i for i in items if not is_menu_item(i)], limit)
 
     def add(self, entry):
         self.table.put_item(Item=_new_item(entry))
+
+    def get_menu(self, day):
+        from boto3.dynamodb.conditions import Attr
+
+        args = {"FilterExpression": Attr("id").eq(MENU_PREFIX + day)}
+        while True:  # 큰 테이블은 Scan 이 여러 쪽으로 나뉜다
+            page = self.table.scan(**args)
+            for i in page.get("Items", []):
+                return str(i.get("notice", ""))
+            if "LastEvaluatedKey" not in page:
+                return None
+            args["ExclusiveStartKey"] = page["LastEvaluatedKey"]
+
+    def save_menu(self, day, notice):
+        self.table.put_item(Item={"id": MENU_PREFIX + day, "kind": "menu", "day": day, "notice": notice,
+                                  "saved_at": int(time.time())})
 
 
 def from_env():

@@ -20,6 +20,7 @@ def lambda_handler(event, context):
         }
         table.put_item(Item=item)
         return {"statusCode": 201}
-    items = table.scan(Limit=50)["Items"]
+    # 같은 테이블에 앱이 남긴 지난 날 메뉴(id 가 menu# 로 시작)는 리뷰가 아니라 뺀다
+    items = [i for i in table.scan(Limit=50)["Items"] if not str(i.get("id", "")).startswith("menu#")]
     # DynamoDB 는 숫자를 Decimal 로 돌려준다. default=str 이 없으면 json.dumps 가 실패한다
     return {"statusCode": 200, "body": json.dumps(items, ensure_ascii=False, default=str)}

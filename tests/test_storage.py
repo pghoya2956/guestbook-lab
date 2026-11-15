@@ -1,7 +1,4 @@
 import importlib
-import shutil
-import socket
-import subprocess
 import sys
 import time
 from pathlib import Path
@@ -55,41 +52,6 @@ def test_dynamodb_store_round_trip(monkeypatch):
     c.post("/entries", data={"name": "민수", "msg": "다이나모"})
     assert "다이나모" in c.get("/").get_data(as_text=True)
     assert c.get("/health").get_json()["storage"] == "dynamodb"
-
-
-def _free_port():
-    s = socket.socket()
-    s.bind(("127.0.0.1", 0))
-    port = s.getsockname()[1]
-    s.close()
-    return port
-
-
-@pytest.fixture()
-def mysql_port():
-    if not shutil.which("docker") or subprocess.run(["docker", "info"], capture_output=True).returncode:
-        pytest.skip("docker 없음")
-    port = _free_port()
-    name = f"gb-mysql-{port}"
-    subprocess.run(
-        ["docker", "run", "-d", "--rm", "--name", name, "-p", f"127.0.0.1:{port}:3306",
-         "-e", "MYSQL_ROOT_PASSWORD=pw", "-e", "MYSQL_DATABASE=guestbook", "mysql:8.4"],
-        check=True, capture_output=True,
-    )
-    try:
-        import pymysql
-
-        for _ in range(90):
-            try:
-                pymysql.connect(host="127.0.0.1", port=port, user="root", password="pw", database="guestbook").close()
-                break
-            except Exception:
-                time.sleep(1)
-        else:
-            pytest.fail("mysql 기동 실패")
-        yield port
-    finally:
-        subprocess.run(["docker", "rm", "-f", name], capture_output=True)
 
 
 @mock_aws
