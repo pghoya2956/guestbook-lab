@@ -2,11 +2,12 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import starlightImageZoom from 'starlight-image-zoom';
+// 사이드바는 lms 가 과정 정의에서 만든다(lms publish). 손으로 고치지 않는다.
+import sidebar from './src/lms-sidebar.mjs';
 
 // 학생 실습 런북. https://pghoya2956.github.io/guestbook-lab/ 로 공개한다.
 // 빌드와 배포는 ../.github/workflows/pages.yml 이 main 에 push 할 때 한다.
 // 덱 실습 장 꼬리말이 /u3 ~ /u15 주소를, 오리엔테이션 장과 2일차 표지 QR 이 첫 화면을 가리킨다. 슬러그를 바꾸면 덱도 고친다.
-const units = (/** @type {number[]} */ ns) => ns.map((n) => `u${n}`);
 
 export default defineConfig({
 	site: 'https://pghoya2956.github.io',
@@ -29,13 +30,7 @@ export default defineConfig({
 						"(()=>{const m=location.hash.match(/^#u(\\d+)$/);if(m&&/\\/guestbook-lab\\/?$/.test(location.pathname))location.replace('/guestbook-lab/u'+m[1]+'/')})()",
 				},
 			],
-			sidebar: [
-				{ label: '처음 오면', items: [{ label: '런북 첫 화면', link: '/' }, 'basics/values', 'basics/errors', 'basics/ignore'] },
-				{ label: '1일차', items: units([1, 3, 4, 5, 6, 7, 8]) },
-				{ label: '2일차', items: units([9, 10, 11, 12, 13, 14, 15]) },
-				{ label: '미니 프로젝트 메뉴', items: [{ autogenerate: { directory: 'menu' } }] },
-				{ label: '수업이 끝난 뒤', items: ['after'] },
-			],
+			sidebar,
 		}),
 	],
 });
