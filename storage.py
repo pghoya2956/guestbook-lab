@@ -2,9 +2,10 @@
 
 세 저장소는 같은 글 형식을 쓴다.
   id, ts(초), name(별명), msg(한줄평), image_key(S3 images/ 아래 사진 키),
-  host(글을 받은 서버 이름), dish(어떤 메뉴에 대한 리뷰인지)
-host 와 dish 는 급식 리뷰 앱에서 더한 필드다. 그 전에 쓴 글이나 서버리스 API(lambda/api)가 쓴 글에는
-없을 수 있어서, 읽을 때 normalize 가 빈 값으로 채운다.
+  host(글을 받은 서버 이름), dish(어떤 메뉴에 대한 리뷰인지),
+  menu(리뷰를 쓴 때 S3 notice.txt 원문. 지난 날 식판을 그날 리뷰의 이 값으로 그린다)
+host, dish, menu 는 급식 리뷰 앱에서 더한 필드다. 그 전에 쓴 글, 이 필드를 모르는 옛 판 서버나 서버리스 API(lambda/api)가
+쓴 글에는 없을 수 있어서, 읽을 때 normalize 가 빈 값으로 채운다. 메뉴를 따로 저장하는 항목이나 표는 없다.
 """
 import json
 import os
@@ -13,7 +14,7 @@ import time
 import uuid
 from pathlib import Path
 
-FIELDS = ("name", "msg", "image_key", "host", "dish")
+FIELDS = ("name", "msg", "image_key", "host", "dish", "menu")
 
 
 def _new_item(entry):
@@ -78,8 +79,8 @@ class MySQLStore:
     """RDS MySQL. 접속 정보는 Parameter Store 에서 읽는다(2학년 4단원)."""
 
     name = "mysql"
-    # 방명록 때 만든 테이블에는 host, dish 칸이 없다. 앱이 켜질 때 없는 칸만 더한다
-    ADDED_COLUMNS = {"host": "VARCHAR(100)", "dish": "VARCHAR(30)"}
+    # 방명록 때 만든 테이블에는 host, dish, menu 칸이 없다. 앱이 켜질 때 없는 칸만 더한다
+    ADDED_COLUMNS = {"host": "VARCHAR(100)", "dish": "VARCHAR(30)", "menu": "TEXT"}
 
     def __init__(self):
         import pymysql
@@ -100,13 +101,18 @@ class MySQLStore:
             cur.execute(
                 "CREATE TABLE IF NOT EXISTS entries ("
                 " id VARCHAR(36) PRIMARY KEY, ts BIGINT, name VARCHAR(30),"
-                " msg VARCHAR(300), image_key VARCHAR(200), host VARCHAR(100), dish VARCHAR(30))"
+                " msg VARCHAR(300), image_key VARCHAR(200), host VARCHAR(100), dish VARCHAR(30), menu TEXT)"
             )
             cur.execute("SHOW COLUMNS FROM entries")
             have = {row["Field"] for row in cur.fetchall()}
             for col, kind in self.ADDED_COLUMNS.items():
                 if col not in have:
-                    cur.execute(f"ALTER TABLE entries ADD COLUMN {col} {kind}")
+                    try:
+                        cur.execute(f"ALTER TABLE entries ADD COLUMN {col} {kind}")
+                    except pymysql.err.OperationalError as e:
+                        # 서버 두 대가 함께 켜지면 늦은 쪽은 이미 더해진 칸(1060)을 만난다. 칸이 있으니 그대로 간다
+                        if e.args[0] != 1060:
+                            raise
             c.commit()
 
     def _conn(self):
@@ -121,8 +127,8 @@ class MySQLStore:
         item = _new_item(entry)
         with self._conn() as c, c.cursor() as cur:
             cur.execute(
-                "INSERT INTO entries (id, ts, name, msg, image_key, host, dish)"
-                " VALUES (%(id)s, %(ts)s, %(name)s, %(msg)s, %(image_key)s, %(host)s, %(dish)s)",
+                "INSERT INTO entries (id, ts, name, msg, image_key, host, dish, menu)"
+                " VALUES (%(id)s, %(ts)s, %(name)s, %(msg)s, %(image_key)s, %(host)s, %(dish)s, %(menu)s)",
                 item,
             )
             c.commit()

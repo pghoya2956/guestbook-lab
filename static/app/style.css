@@ -25,6 +25,7 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html { -webkit-text-size-adjust: 100%; }
 body { margin: 0; background: var(--page); color: var(--ink); font-family: var(--sans); font-variant-numeric: tabular-nums; line-height: 1.5; }
 a { color: var(--green-ink); }

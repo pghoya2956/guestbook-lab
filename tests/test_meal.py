@@ -108,7 +108,7 @@ def test_index_shows_plain_notice_and_errors(monkeypatch, tmp_path):
     assert "리뷰 가장 많음" not in body
     app = _load(monkeypatch, tmp_path, NOTICE_BUCKET="no-such-bucket")
     body = app.app.test_client().get("/").get_data(as_text=True)
-    assert "(공지를 읽지 못했습니다: NoSuchBucket)" in body
+    assert "(오늘 메뉴를 읽지 못했습니다: NoSuchBucket)" in body
     app = _load(monkeypatch, tmp_path)
     assert "아직 오늘 메뉴가 없습니다" in app.app.test_client().get("/").get_data(as_text=True)
 
@@ -244,7 +244,7 @@ def test_past_day_shows_only_that_days_reviews(monkeypatch, tmp_path):
     c = app.app.test_client()
     yday = (app.today_kst() - app.timedelta(days=1)).isoformat()
     body = c.get(f"/?day={yday}").get_data(as_text=True)
-    assert "어제 리뷰" in body and "오늘 리뷰" not in body and "지난 메뉴는 보관하지 않습니다" in body
+    assert "어제 리뷰" in body and "오늘 리뷰" not in body and "이날 메뉴 기록이 없습니다" in body
     body = c.get("/").get_data(as_text=True)
     assert "어제 리뷰" in body and "오늘 리뷰" in body  # 오늘 보기는 최근 리뷰 전체
     assert "오늘 리뷰" in c.get("/?day=2999-01-01").get_data(as_text=True)  # 미래 날짜는 오늘 보기
@@ -282,7 +282,7 @@ def test_tray_counts_only_todays_reviews(monkeypatch, tmp_path):
 def test_fourth_side_dish_fills_the_tray_row(monkeypatch, tmp_path):
     app = _load(monkeypatch, tmp_path)
     for n, want in ((0, 3), (2, 1), (3, 0), (4, 2), (6, 0)):
-        menu, _ = app._menu_view("ok", "\n".join(f"반찬|반찬{i}|" for i in range(n)) + "\n밥|밥|", [])
+        menu = app.fill_tray(app.parse_menu("\n".join(f"반찬|반찬{i}|" for i in range(n)) + "\n밥|밥|"), [], app.today_kst())
         assert menu["empty_sides"] == want, n
 
 

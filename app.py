@@ -16,13 +16,14 @@ from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 from flask import Flask, abort, redirect, render_template, request, url_for
+from werkzeug.exceptions import HTTPException
 
 import storage
 
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024
 
-APP_VERSION = "2.0.0"
+APP_VERSION = "2.1.0"
 TITLE = os.environ.get("GUESTBOOK_TITLE", "오늘 급식")
 INTRO = os.environ.get("GUESTBOOK_INTRO", "우리 반이 운영하는 급식 리뷰")
 NOTICE_BUCKET = os.environ.get("NOTICE_BUCKET", "")
@@ -59,9 +60,15 @@ def read_notice_status():
 
         s3 = boto3.client("s3", region_name=AWS_REGION, config=_quick_config())
         obj = s3.get_object(Bucket=NOTICE_BUCKET, Key="notice.txt")
-        return "ok", obj["Body"].read().decode("utf-8").strip()
+        # utf-8-sig: 메모장 등이 맨 앞에 붙이는 BOM 을 떼어 첫 줄(밥|…)이 메뉴로 읽히게 한다
+        return "ok", obj["Body"].read().decode("utf-8-sig").strip()
     except Exception as e:  # 실습에서 권한·버킷 오류를 화면에 보여 준다
-        return "error", f"(공지를 읽지 못했습니다: {type(e).__name__})"
+        return "error", f"(오늘 메뉴를 읽지 못했습니다: {type(e).__name__})"
+
+
+def notice_lines(text):
+    """공지로 보일 글. # 으로 시작하는 줄(견본의 설명)은 화면에 내지 않는다."""
+    return "\n".join(l for l in (text or "").splitlines() if not l.strip().startswith("#")).strip()
 
 
 # notice.txt 메뉴 형식: 한 줄에 「칸|음식|알레르기 번호」. 칸은 밥, 국, 반찬(여러 줄), 후식, 열량.
@@ -221,19 +228,18 @@ def _parse_day(s):
     return d if d < today_kst() else None
 
 
-def _menu_view(notice_state, notice_text, reviews):
-    """오늘 메뉴 영역에 쓸 값. 칸마다 오늘 쓴 리뷰 수를 세고 가장 많은 칸을 표시한다."""
-    menu = parse_menu(notice_text) if notice_state == "ok" else None
-    if not menu:
-        return None, []
+def fill_tray(menu, reviews, day):
+    """식판 칸마다 리뷰 수, 칸 사진, 가장 많은 칸 표시를 붙인다. reviews 는 최신 글이 앞이다.
+    리뷰 수는 그날(day) 쓴 리뷰만 센다. 김치처럼 매일 나오는 반찬이 다른 날 리뷰로 쌓이지 않게 한다.
+    칸 사진은 reviews 가운데 그 메뉴를 고른 가장 최근 사진 리뷰다(오늘 식판은 날짜를 따지지 않아 시연 서버가 자정에 비지 않고,
+    지난 날 식판은 그날 리뷰만 넘겨받는다). 사진 리뷰가 없으면 칸은 글자만 보인다."""
     counts, photos = {}, {}
-    today = today_kst()
-    for r in reviews:  # reviews 는 최신 글이 앞이다
-        # 김치처럼 매일 나오는 반찬이 지난 리뷰로 쌓이지 않게 오늘 리뷰만 센다
-        if r["dish"] and datetime.fromtimestamp(r["ts"], KST).date() == today:
+    for r in reviews:
+        if not r["dish"]:
+            continue
+        if datetime.fromtimestamp(r["ts"], KST).date() == day:
             counts[r["dish"]] = counts.get(r["dish"], 0) + 1
-        # 칸 사진은 그 메뉴를 고른 사진 리뷰 가운데 가장 최근 것이다. 없으면 칸은 글자만 보인다
-        if r["dish"] and r["image_key"] and r["dish"] not in photos:
+        if r["image_key"] and r["dish"] not in photos:
             photos[r["dish"]] = r
     dishes = [d for d in [*menu["sides"], menu["rice"], menu["soup"], menu["dessert"]] if d]
     for d in dishes:
@@ -250,7 +256,20 @@ def _menu_view(notice_state, notice_text, reviews):
         d["top"] = top > 0 and unique and any(d is s for s in slots) and d["reviews"] == top
     # 반찬 칸은 세 칸씩 한 줄이다. 모자라는 칸은 빈 칸으로 채워 식판 모양을 지킨다
     menu["empty_sides"] = max(3 - len(menu["sides"]), -len(menu["sides"]) % 3)
-    return menu, [d["name"] for d in dishes]
+    return menu
+
+
+def dish_names_of(menu):
+    return [d["name"] for d in [*menu["sides"], menu["rice"], menu["soup"], menu["dessert"]] if d] if menu else []
+
+
+def menu_of_day(day_reviews):
+    """지난 날 메뉴: 그날 가장 최근 리뷰에 함께 남은 notice.txt 원문. menu 칸이 없는 예전 리뷰는 건너뛴다."""
+    for r in day_reviews:  # 최신 글이 앞이다
+        menu = parse_menu(r["menu"]) if r["menu"] else None
+        if menu:
+            return menu
+    return None
 
 
 @app.get("/")
@@ -269,12 +288,22 @@ def index():
         store_error = type(e).__name__
         reviews = []
 
+    # 오늘 메뉴는 요청마다 S3 에서 읽는다(9단원 도전: notice.txt 를 바꾸면 재시작 없이 바로 바뀐다)
     notice_state, notice_text = read_notice_status()
-    menu, dish_names = _menu_view(notice_state, notice_text, reviews)
+    today_menu = parse_menu(notice_text) if notice_state == "ok" else None
+    dish_names = dish_names_of(today_menu)  # 리뷰는 언제나 오늘 쓰니 고를 메뉴도 오늘 것
     hello, hello_source, hello_ms = hello_info()
 
     if day:
+        # 지난 날: 그날 리뷰만, 식판은 그날 가장 최근 리뷰에 남은 메뉴로. 저장소를 더 부르지 않는다
         reviews = [r for r in reviews if datetime.fromtimestamp(r["ts"], KST).date() == day]
+        menu = menu_of_day(reviews)
+        if menu:
+            fill_tray(menu, reviews, day)
+    else:
+        menu = today_menu
+        if menu:
+            fill_tray(menu, reviews, today)
     reviews = reviews[:50]
     for r in reviews:
         r["image_url"] = image_url(r["image_key"])
@@ -297,7 +326,7 @@ def index():
         storage=store.name,
         store_error=store_error,
         notice_state=notice_state,
-        notice=notice_text,
+        notice=notice_lines(notice_text) if notice_state == "ok" else notice_text,
         menu=menu,
         dish_names=dish_names,
         read_at=datetime.now(KST).strftime("%H:%M"),
@@ -315,7 +344,7 @@ def index():
         prev_day=(shown_day - timedelta(days=1)).isoformat(),
         next_day=None if not day else ("" if nxt >= today else nxt.isoformat()),
         image_enabled=bool(IMAGE_BUCKET),
-        form_error=request.args.get("error") == "save",
+        form_error={"save": "save", "toolarge": "toolarge"}.get(request.args.get("error"), ""),
         render_ms=round((time.perf_counter() - started) * 1000),
     )
 
@@ -337,11 +366,23 @@ def add_entry():
             boto3.client("s3", region_name=AWS_REGION).upload_fileobj(
                 f, IMAGE_BUCKET, image_key, ExtraArgs={"ContentType": f.mimetype}
             )
-        store.add({"name": name, "msg": msg, "image_key": image_key, "host": socket.gethostname(), "dish": dish})
+        # 리뷰를 쓴 때의 notice.txt 원문을 함께 남긴다. 지난 날 식판을 그날 리뷰의 이 값으로 그린다
+        notice_state, notice_text = read_notice_status()
+        menu = notice_text[:8000] if notice_state == "ok" else ""
+        store.add({"name": name, "msg": msg, "image_key": image_key, "host": socket.gethostname(), "dish": dish,
+                   "menu": menu})
+    except HTTPException:  # 413(사진이 5MB 넘음) 같은 요청 오류는 그 처리기(too_large)로 넘긴다
+        raise
     except Exception:  # 사진 버킷이나 저장소 권한 오류. 자세한 내용은 앱 기록(journalctl)에 남는다
         app.logger.exception("리뷰를 저장하지 못했습니다")
         return redirect(url_for("index", error="save") + "#write")
     return redirect(url_for("index") + "#reviews")
+
+
+@app.errorhandler(413)
+def too_large(e):
+    """사진이 MAX_CONTENT_LENGTH(5MB)를 넘으면 리뷰 쓰기 자리에 안내를 보인다."""
+    return redirect(url_for("index", error="toolarge") + "#write")
 
 
 @app.get("/health")

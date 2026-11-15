@@ -60,14 +60,10 @@
     <section class="menu" id="menu" aria-labelledby="menu-h">
       <div class="menu-head">
         <h1 id="menu-h">{{ '오늘 메뉴' if not day else day_long ~ ' 메뉴' }}</h1>
-        {% if menu and menu.kcal and not day %}<span class="kcal"><strong>{{ menu.kcal }}</strong>{% if menu.kcal.isdigit() %} kcal{% endif %}</span>{% endif %}
+        {% if menu and menu.kcal %}<span class="kcal"><strong>{{ menu.kcal }}</strong>{% if menu.kcal.isdigit() %} kcal{% endif %}</span>{% endif %}
       </div>
 
-      {% if day %}
-      <div class="tray tray-empty" aria-hidden="true">{% for _ in range(3) %}<div class="slot slot-empty"></div>{% endfor %}<div class="tray-bottom"><div class="slot slot-empty"></div><div class="slot slot-soup slot-empty"></div></div></div>
-      <p class="tray-note">지난 메뉴는 보관하지 않습니다. notice.txt 에는 오늘 메뉴 하나만 있습니다. 아래에 이날 남긴 리뷰만 모았습니다. <a href="/">오늘로 돌아가기</a></p>
-
-      {% elif menu %}
+      {% if menu %}
       <div class="tray">
         {% for d in menu.sides %}
         <div class="slot{{ ' slot-top' if d.top }}{{ ' slot-photo' if d.photo }}">
@@ -97,9 +93,14 @@
       </div>
       <div class="menu-foot">
         {% if menu.dessert %}<span>후식 <strong>{{ menu.dessert.name }}</strong>{% if menu.dessert.reviews %}, 리뷰 {{ menu.dessert.reviews }}{% endif %}</span>{% endif %}
-        <span>메뉴는 S3 의 <span class="mono ink">notice.txt</span> 에서 {{ read_at }} 에 읽었습니다</span>
+        {% if day %}<span>그날 마지막 리뷰를 쓸 때의 <span class="mono ink">notice.txt</span> 메뉴입니다</span> <a href="/">오늘로 돌아가기</a>
+        {% else %}<span>메뉴는 S3 의 <span class="mono ink">notice.txt</span> 에서 {{ read_at }} 에 읽었습니다</span>{% endif %}
       </div>
-      {% if menu.notes %}<div class="notice"><span class="notice-tag">공지</span><p>{{ menu.notes|join('\n') }}</p></div>{% endif %}
+      {% if menu.notes and not day %}<div class="notice"><span class="notice-tag">공지</span><p>{{ menu.notes|join('\n') }}</p></div>{% endif %}
+
+      {% elif day %}
+      <div class="tray tray-empty" aria-hidden="true">{% for _ in range(3) %}<div class="slot slot-empty"></div>{% endfor %}<div class="tray-bottom"><div class="slot slot-empty"></div><div class="slot slot-soup slot-empty"></div></div></div>
+      <p class="tray-note">이날 메뉴 기록이 없습니다. <a href="/">오늘로 돌아가기</a></p>
 
       {% else %}
       {% if notice_state == 'ok' and notice %}
@@ -119,7 +120,9 @@
     <aside class="side">
       <form class="write" id="write" method="post" action="/entries" enctype="multipart/form-data" aria-labelledby="write-h">
         <h2 id="write-h">리뷰 남기기</h2>
-        {% if form_error %}<p class="form-error" role="alert">리뷰를 저장하지 못했습니다. 서버에서 <span class="mono">journalctl -u guestbook</span> 끝부분의 오류 이름을 봅니다.</p>{% endif %}
+        {% if form_error == 'toolarge' %}<p class="form-error" role="alert">사진이 5MB 를 넘습니다. 더 작은 사진을 고르세요.</p>
+        {% elif form_error %}<p class="form-error" role="alert">리뷰를 저장하지 못했습니다. 서버에서 <span class="mono">journalctl -u guestbook</span> 끝부분의 오류 이름을 봅니다.</p>{% endif %}
+        <p class="form-error" role="alert" data-photo-error hidden>사진이 5MB 를 넘습니다. 더 작은 사진을 고르세요.</p>
         <div class="write-extra">
           <label class="field">별명
             <input name="name" type="text" maxlength="30" placeholder="이름 대신 별명" autocomplete="nickname">
@@ -211,7 +214,7 @@
       <p>{% if image_enabled %}리뷰를 남길 때 「급식 사진」으로 사진을 붙이면 여기에 모입니다.{% else %}config.env 의 IMAGE_BUCKET 에 사진 버킷 이름을 적으면 리뷰에 사진을 붙일 수 있습니다.{% endif %}</p>
       {% elif day %}
       <p class="state-title">{{ day_long }}에 남긴 리뷰가 없습니다</p>
-      <p>이 저장소({{ storage }})에 그날 쓴 글이 없습니다.</p>
+      <p>이 저장소({{ storage }})에 그날 쓴 리뷰가 없습니다.</p>
       {% else %}
       <p class="state-title">아직 리뷰가 없습니다</p>
       <p>첫 리뷰를 남기면 여기에 별명, 한줄평과 함께 리뷰를 받은 서버 이름이 보입니다.</p>

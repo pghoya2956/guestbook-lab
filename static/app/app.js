@@ -26,8 +26,16 @@
   var input = document.querySelector("[data-photo]");
   var text = document.querySelector("[data-photo-text]");
   if (!input || !text) return;
+  var LIMIT = 5 * 1024 * 1024; // 앱의 MAX_CONTENT_LENGTH(5MB)와 같다. 넘으면 올리기 전에 막는다
+  var warn = document.querySelector("[data-photo-error]");
   input.addEventListener("change", function () {
     var f = input.files && input.files[0];
+    var tooBig = !!f && f.size > LIMIT;
+    if (warn) warn.hidden = !tooBig;
+    if (tooBig) {
+      input.value = "";
+      f = null;
+    }
     text.textContent = f ? f.name : "급식 사진";
     input.parentNode.classList.toggle("has-file", !!f);
   });
