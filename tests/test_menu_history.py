@@ -289,3 +289,25 @@ def test_lambda_api_list_skips_menu_items(monkeypatch):
     sys.modules.pop("lambda_function", None)
     out = mod.lambda_handler({"requestContext": {"http": {"method": "GET"}}}, None)
     assert [i["msg"] for i in json.loads(out["body"])] == ["리뷰"]
+
+
+def test_broken_menus_file_recovers_on_next_save(monkeypatch, tmp_path):
+    """menus.json 이 깨져 있어도(쓰다 끊김 등) 화면은 뜨고 오늘 메뉴를 다시 남긴다."""
+    app = _load(monkeypatch, tmp_path)
+    today = app.today_kst().isoformat()
+    (tmp_path / "menus.json").write_text('{"2026-11-1', encoding="utf-8")
+    assert app.store.get_menu(today) is None
+    app.store.save_menu(today, MENU)
+    assert app.store.get_menu(today) == MENU
+    assert not list(tmp_path.glob("*.tmp"))  # 임시 파일을 남기지 않는다
+
+
+@mock_aws
+def test_dynamodb_menu_lookup_follows_scan_pages(monkeypatch, tmp_path):
+    """테이블이 커서 Scan 이 여러 쪽으로 나뉘어도 메뉴를 찾는다."""
+    _ddb_table()
+    app = _load(monkeypatch, tmp_path, STORAGE="dynamodb", DYNAMODB_TABLE="guestbook")
+    pages = [{"Items": [], "LastEvaluatedKey": {"id": "x"}}, {"Items": [{"id": "menu#2026-11-14", "notice": OLD_MENU}]}]
+    seen = []
+    monkeypatch.setattr(app.store.table, "scan", lambda **k: (seen.append(k.get("ExclusiveStartKey")), pages[len(seen) - 1])[1])
+    assert app.store.get_menu("2026-11-14") == OLD_MENU and seen == [None, {"id": "x"}]

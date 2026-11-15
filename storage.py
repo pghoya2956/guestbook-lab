@@ -54,9 +54,13 @@ class FileStore:
         self.lock = threading.Lock()
 
     def _menus(self):
+        """지난 날 메뉴 기록. 파일이 깨져 있으면(쓰다 끊김) 빈 기록으로 보고 다음 저장이 새로 쓴다."""
         if not self.menu_path.exists():
             return {}
-        return json.loads(self.menu_path.read_text(encoding="utf-8"))
+        try:
+            return json.loads(self.menu_path.read_text(encoding="utf-8"))
+        except ValueError:
+            return {}
 
     def get_menu(self, day):
         with self.lock:
@@ -68,7 +72,10 @@ class FileStore:
             menus = self._menus()
             menus[day] = {"notice": notice, "saved_at": int(time.time())}
             self.menu_path.parent.mkdir(parents=True, exist_ok=True)
-            self.menu_path.write_text(json.dumps(menus, ensure_ascii=False), encoding="utf-8")
+            # 임시 파일에 다 쓴 뒤 바꿔 끼운다. 쓰다 끊겨도 menus.json 이 반쯤 쓰인 채로 남지 않는다
+            tmp = self.menu_path.with_name(self.menu_path.name + ".tmp")
+            tmp.write_text(json.dumps(menus, ensure_ascii=False), encoding="utf-8")
+            os.replace(tmp, self.menu_path)
 
     def _read(self):
         if not self.path.exists():
