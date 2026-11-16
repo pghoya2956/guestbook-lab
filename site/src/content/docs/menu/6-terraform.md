@@ -1,5 +1,5 @@
 ---
-# 생성물. lms build 가 courses/aws-intro/units/u14/menus/terraform.md 에서 만든다. 손으로 고치지 않는다. 원본 해시 91de2cc9c53f
+# 생성물. lms build 가 courses/aws-intro/units/u14/menus/terraform.md 에서 만든다. 손으로 고치지 않는다. 원본 해시 ef74aeea64ba
 title: "과제 6(심화). 2일차 구조를 코드로 다시 만들기"
 sidebar:
   label: "6. Terraform (심화)"
@@ -123,6 +123,15 @@ terraform destroy
 | 13단원 | 함수, 실행 역할, API 게이트웨이 트리거 | `aws_lambda_function`, `aws_iam_role`, `aws_apigatewayv2_api`, `aws_lambda_permission` | `tf-day2-hello`, `tf-day2-hello-role`, `tf-day2-hello-api` |
 
 손으로 할 때와 두 군데가 다릅니다. 서버 보안 그룹 `tf-day2-web` 은 80 포트를 로드 밸런서 보안 그룹에서 오는 것만 받아서, 서버 공인 IP 로 바로 열면 열리지 않습니다. 13단원에서 nano 로 서버마다 고치던 `HELLO_API_URL=` 줄은 사용자 데이터가 처음부터 채웁니다.
+
+<details class="walkthrough">
+<summary>막혔을 때: 이 부분 흐름 영상 (1분 28초)</summary>
+
+화면 위 띠의 번호가 아래 「만들 것」 번호와 같고, 「확인」과 「지우기」는 그 이름으로 나옵니다. 오래 기다리는 부분은 줄였습니다. 막힌 번호를 찾아 그 부분만 확인하는 용도입니다.
+
+<video controls preload="none" width="100%" src="/guestbook-lab/video/terraform.mp4"></video>
+
+</details>
 
 ### 만들 것
 
