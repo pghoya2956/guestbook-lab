@@ -1,5 +1,5 @@
 ---
-# 생성물. lms build 가 courses/aws-intro/pages/menu/index.md 에서 만든다. 손으로 고치지 않는다. 원본 해시 42245265dc3d
+# 생성물. lms build 가 courses/aws-intro/pages/menu/index.md 에서 만든다. 손으로 고치지 않는다. 원본 해시 d131f27421d2
 title: 미니 프로젝트 과제
 description: 과제 여섯 가지, 쓰는 서비스, 완료 기준
 sidebar:
@@ -16,4 +16,4 @@ sidebar:
 | [3. 트래픽 두 배 버티기](/guestbook-lab/menu/3-scaling/) | 오토 스케일링 | 부하를 걸면 서버가 늘어남 |
 | [4. 장애 알림 받기](/guestbook-lab/menu/4-alarm/) | CloudWatch 알람 | 오류를 일으키면 알람이 울림 |
 | [5. 저장소를 MySQL 로 (심화)](/guestbook-lab/menu/5-rds/) | RDS, Parameter Store | 리뷰가 DB 에 쌓임 |
-| [6. VPC 를 코드로 (심화)](/guestbook-lab/menu/6-terraform/) | Terraform | apply 로 같은 구조가 생김 |
+| [6. 2일차 구조를 코드로 (심화)](/guestbook-lab/menu/6-terraform/) | Terraform | apply 로 같은 구조가 생김 |
