@@ -1,0 +1,30 @@
+#!/bin/bash
+# 11단원 사용자 데이터와 같다. 서버가 처음 켜질 때 root 로 한 번 실행된다.
+# Terraform 이 notice_bucket 과 hello_api_url 자리를 채워 시작 템플릿에 넣는다.
+# 실패하면 서버에서 /var/log/cloud-init-output.log 를 본다.
+set -euxo pipefail
+
+# git, 파이썬 3.11, nano 편집기를 설치합니다
+dnf install -y git python3.11 nano
+# 급식 리뷰 앱 저장소를 /opt/guestbook 폴더로 받습니다
+git clone https://github.com/pghoya2956/guestbook-lab.git /opt/guestbook
+# 앱 폴더로 들어갑니다
+cd /opt/guestbook
+# 이 앱 전용 파이썬 도구 상자(.venv)를 만듭니다
+python3.11 -m venv .venv
+# 도구 상자(.venv)에 앱에 필요한 라이브러리를 넣습니다
+.venv/bin/pip install -r requirements.txt
+# 설정 파일 견본을 config.env 로 복사합니다
+cp config.env.example config.env
+# 9단원 공지 버킷 이름을 설정 파일에 적습니다
+sed -i 's|^NOTICE_BUCKET=.*|NOTICE_BUCKET=${notice_bucket}|' /opt/guestbook/config.env
+# 13단원 급식실 한마디 API 주소를 설정 파일에 적습니다. 손으로 nano 에서 고치던 줄입니다
+sed -i 's|^HELLO_API_URL=.*|HELLO_API_URL=${hello_api_url}|' /opt/guestbook/config.env
+# 리뷰를 저장할 폴더를 만듭니다
+mkdir -p /var/lib/guestbook
+# 관리자(systemd)에게 앱 등록 파일을 넘깁니다
+cp guestbook.service /etc/systemd/system/
+# 관리자(systemd)가 새 등록 파일을 읽게 합니다
+systemctl daemon-reload
+# 관리자(systemd)가 앱을 지금 켜고, 서버가 켜질 때마다 저절로 켜게 합니다
+systemctl enable --now guestbook
